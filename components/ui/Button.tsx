@@ -4,7 +4,7 @@ import { motion, type HTMLMotionProps } from 'framer-motion'
 import Link from 'next/link'
 import { type MouseEvent, type ReactNode } from 'react'
 
-type ButtonVariant = 'primary' | 'ghost'
+type ButtonVariant = 'primary' | 'ghost' | 'accent'
 
 interface ButtonProps extends Omit<HTMLMotionProps<'span'>, 'children'> {
   variant: ButtonVariant
@@ -15,7 +15,7 @@ interface ButtonProps extends Omit<HTMLMotionProps<'span'>, 'children'> {
   label?: string
 }
 
-export default function Button({
+export function Button({
   variant,
   children,
   href,
@@ -27,7 +27,11 @@ export default function Button({
   ...rest
 }: ButtonProps) {
   const baseClass =
-    variant === 'primary' ? 'btn-primary' : 'btn-ghost'
+    variant === 'primary'
+      ? 'btn-primary'
+      : variant === 'accent'
+        ? 'hero-waitlist-btn'
+        : 'btn-ghost'
   const widthClass = fullWidth ? 'w-full block' : ''
   const combined = `${baseClass} ${widthClass} ${className}`.trim()
 
@@ -73,3 +77,5 @@ export default function Button({
     </motion.span>
   )
 }
+
+export default Button

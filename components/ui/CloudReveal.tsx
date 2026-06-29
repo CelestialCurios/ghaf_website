@@ -1,7 +1,8 @@
 'use client'
 
 import Image from 'next/image'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { Button } from '@/components/ui/Button'
 import CursorCloud from './CursorCloud'
 
 interface CloudRevealProps {
@@ -32,13 +33,6 @@ export default function CloudReveal({ revealSrc, darkSrc }: CloudRevealProps) {
   const reducedMotionRef = useRef(false)
 
   const [cursor, setCursor] = useState({ x: 0, y: 0, visible: false })
-
-  const scrollToWaitlist = useCallback(() => {
-    const target =
-      document.getElementById('waitlist-email-footer') ??
-      document.getElementById('footer')
-    target?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-  }, [])
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -212,13 +206,19 @@ export default function CloudReveal({ revealSrc, darkSrc }: CloudRevealProps) {
 
             <div className="hero-side-text hero-side-text-right">
               <p className="hero-side-text-vertical">JOIN THE WAITLIST NOW</p>
-              <button
-                type="button"
-                className="hero-waitlist-btn"
-                onClick={scrollToWaitlist}
+              <Button
+                variant="accent"
+                onClick={() => {
+                  document.getElementById('footer')?.scrollIntoView({ behavior: 'smooth' })
+                }}
+                style={{
+                  writingMode: 'vertical-rl',
+                  transform: 'rotate(180deg)',
+                  cursor: 'pointer',
+                }}
               >
                 Join waitlist →
-              </button>
+              </Button>
             </div>
           </div>
         </div>
