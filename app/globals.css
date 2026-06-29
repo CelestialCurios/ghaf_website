@@ -211,3 +211,131 @@ video {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* PR2 — Hero cursor cloud reveal */
+:root {
+  --color-hero-dark-bg: #0a0a0a;
+  --color-hero-btn-text: #1a1a1a;
+  --color-hero-side-text: rgba(245, 240, 232, 0.75);
+  --color-hero-dark-side-text: rgba(245, 240, 232, 0.12);
+  --color-scroll-line: rgba(245, 240, 232, 0.2);
+  --color-scroll-line-active: rgba(245, 240, 232, 0.6);
+}
+
+@keyframes cloudMorph {
+  0% {
+    border-radius: 50% 60% 50% 60%;
+  }
+  25% {
+    border-radius: 60% 50% 60% 50%;
+  }
+  50% {
+    border-radius: 55% 65% 45% 65%;
+  }
+  75% {
+    border-radius: 65% 45% 65% 55%;
+  }
+  100% {
+    border-radius: 50% 60% 50% 60%;
+  }
+}
+
+.cursor-cloud {
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.9);
+  animation: cloudMorph 2s ease-in-out infinite;
+}
+
+@keyframes scrollDrop {
+  0% {
+    top: -100%;
+  }
+  100% {
+    top: 100%;
+  }
+}
+
+.hero-reveal-section {
+  cursor: none;
+}
+
+.hero-reveal-root {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.hero-side-text {
+  position: absolute;
+  top: 50%;
+  font-family: var(--font-grotesk);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--color-hero-side-text);
+  white-space: nowrap;
+}
+
+.hero-side-text-left {
+  left: 32px;
+  transform: translateY(-50%) rotate(-90deg);
+}
+
+.hero-side-text-right {
+  right: 32px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.hero-side-text-vertical {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  margin: 0;
+}
+
+.hero-side-text-dark {
+  color: var(--color-hero-dark-side-text);
+}
+
+.hero-waitlist-btn {
+  background: var(--color-accent);
+  color: var(--color-hero-btn-text);
+  font-family: var(--font-grotesk);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 10px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--color-accent);
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  cursor: pointer;
+}
+
+.hero-phone-silhouette {
+  display: block;
+  filter: brightness(0);
+  opacity: 0.85;
+}
+
+.hero-scroll-line {
+  width: 1px;
+  height: 32px;
+  background: var(--color-scroll-line);
+  overflow: hidden;
+  position: relative;
+}
+
+.hero-scroll-line-drop {
+  position: absolute;
+  top: -100%;
+  width: 1px;
+  height: 100%;
+  background: var(--color-scroll-line-active);
+  animation: scrollDrop 1.8s ease-in-out infinite;
+}
+

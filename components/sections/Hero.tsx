@@ -1,72 +1,67 @@
 'use client'
 
 import { motion, useReducedMotion } from 'framer-motion'
-import Button from '@/components/ui/Button'
+import Nav from '@/components/Nav'
+import CloudReveal from '@/components/ui/CloudReveal'
 
-const headlineLines = [
-  { text: 'YOUR CARBON', accent: false },
-  { text: 'DETOX STARTS', accent: false },
-  { text: 'HERE.', accent: true },
-]
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.15 },
+  },
+}
+
+const fadeDown = {
+  hidden: { opacity: 0, y: -10 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
+}
+
+const fadeIn = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.8, ease: 'easeOut' } },
+}
+
+const fadeInDelayed = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { duration: 0.5, ease: 'easeOut', delay: 1.2 },
+  },
+}
 
 export default function Hero() {
   const reduceMotion = useReducedMotion()
 
   return (
-    <section
-      id="hero"
-      className="textured bg-bg text-center"
-      style={{
-        backgroundColor: 'var(--color-bg)',
-        paddingTop: 'var(--section-padding-y)',
-        paddingBottom: 0,
-      }}
-    >
-      <div className="section-inner !pb-0">
-        <motion.p
-          className="mb-6 inline-block border-b border-dim pb-[9px] font-grotesk text-[10px] uppercase tracking-[0.3em] text-muted"
-          initial={reduceMotion ? false : { opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: 'easeOut' }}
+    <section id="hero" className="hero-reveal-root relative w-full overflow-hidden">
+      <motion.div
+        variants={containerVariants}
+        initial={reduceMotion ? false : 'hidden'}
+        animate="visible"
+      >
+        <motion.div
+          className="absolute left-0 right-0 top-0 z-20"
+          variants={fadeDown}
         >
-          Your companion in a carbon-free life
-        </motion.p>
+          <Nav />
+        </motion.div>
 
-        <h1 className="type-h1 mb-8">
-          {headlineLines.map((line, index) => (
-            <motion.span
-              key={line.text}
-              className={`block ${line.accent ? 'text-accent' : 'text-cream'}`}
-              initial={reduceMotion ? false : { opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.5,
-                ease: 'easeOut',
-                delay: reduceMotion ? 0 : index * 0.1,
-              }}
-            >
-              {line.text}
-            </motion.span>
-          ))}
-        </h1>
+        <motion.div variants={fadeIn}>
+          <CloudReveal
+            revealSrc="/assets/front_mockup_with_app.png"
+            darkSrc="/assets/phone_black.png"
+          />
+        </motion.div>
 
-        <div className="mb-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <Button variant="primary" href="#footer" className="!px-[30px] !py-[14px]">
-            Join the waitlist →
-          </Button>
-          <Button variant="ghost" href="#features">
-            See how it works ↓
-          </Button>
-        </div>
-
-        <img
-          src="/mockup.png"
-          alt="Ghaf app — Carbon Tracker screen"
-          width={340}
-          className="mx-auto block max-w-[340px] w-full"
-          style={{ display: 'block', margin: '0 auto' }}
-        />
-      </div>
+        <motion.div
+          className="pointer-events-none absolute bottom-7 left-1/2 z-20 flex -translate-x-1/2 flex-col items-center gap-1.5"
+          variants={fadeInDelayed}
+        >
+          <div className="hero-scroll-line">
+            <div className="hero-scroll-line-drop" />
+          </div>
+        </motion.div>
+      </motion.div>
     </section>
   )
 }
