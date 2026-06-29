@@ -319,7 +319,7 @@ video {
 .hero-phone-silhouette {
   display: block;
   filter: brightness(0);
-  opacity: 0.85;
+  opacity: 0.9;
 }
 
 .hero-scroll-line {
@@ -337,5 +337,201 @@ video {
   height: 100%;
   background: var(--color-scroll-line-active);
   animation: scrollDrop 1.8s ease-in-out infinite;
+}
+
+/* PR2 Patch 2 — hero layout, flicker, ambient, nav */
+:root {
+  --color-nav-scrolled-bg: rgba(10, 10, 10, 0.6);
+  --color-nav-link: rgba(245, 240, 232, 0.5);
+  --color-nav-cta-bg: rgba(245, 240, 232, 0.1);
+  --color-nav-cta-border: rgba(245, 240, 232, 0.25);
+  --color-ambient-a: rgba(61, 92, 58, 0.18);
+  --color-ambient-b: rgba(61, 92, 58, 0.12);
+  --color-ambient-c: rgba(139, 195, 74, 0.04);
+  --color-ambient-d: rgba(255, 222, 89, 0.03);
+}
+
+.text-hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.text-revealed {
+  animation: textFlicker 0.8s ease forwards;
+}
+
+@keyframes textFlicker {
+  0% {
+    opacity: 0;
+    visibility: visible;
+  }
+  10% {
+    opacity: 1;
+  }
+  20% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+  55% {
+    opacity: 0;
+  }
+  70% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+.nav-hero {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 32px;
+  background: transparent;
+  transition: background 0.3s ease, backdrop-filter 0.3s ease;
+}
+
+.nav-hero-scrolled {
+  background: var(--color-nav-scrolled-bg);
+  backdrop-filter: blur(12px);
+}
+
+.nav-hero-link {
+  font-family: var(--font-grotesk);
+  font-size: 11px;
+  color: var(--color-nav-link);
+  letter-spacing: 0.5px;
+}
+
+.nav-hero-cta {
+  background: var(--color-nav-cta-bg);
+  border: 1px solid var(--color-nav-cta-border);
+  color: var(--color-cream);
+  font-family: var(--font-grotesk);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 7px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.hero-phone-parallax {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, calc(-50% + var(--parallax-offset, 0px)));
+}
+
+.hero-phone-image {
+  display: block;
+  max-height: 85vh;
+  width: auto;
+  height: auto;
+}
+
+.hero-ambient {
+  position: absolute;
+  pointer-events: none;
+  z-index: 2;
+  border-radius: 50%;
+  border: 1px solid transparent;
+}
+
+.hero-ambient-a {
+  width: 500px;
+  height: 500px;
+  background: var(--color-ambient-a);
+  filter: blur(80px);
+  top: -100px;
+  left: -100px;
+}
+
+.hero-ambient-b {
+  width: 400px;
+  height: 400px;
+  background: var(--color-ambient-b);
+  filter: blur(100px);
+  bottom: -80px;
+  right: -80px;
+}
+
+.hero-ambient-c {
+  width: 300px;
+  height: 600px;
+  background: var(--color-ambient-c);
+  filter: blur(120px);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.hero-ambient-d {
+  width: 200px;
+  height: 200px;
+  background: var(--color-ambient-d);
+  filter: blur(60px);
+  top: 20%;
+  right: 15%;
+}
+
+.hero-text-left {
+  position: absolute;
+  left: 48px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 15;
+  pointer-events: none;
+}
+
+.hero-text-right {
+  position: absolute;
+  right: 48px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 15;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 20px;
+}
+
+.hero-text-right-copy {
+  font-family: var(--font-grotesk);
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--color-cream);
+  text-align: right;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+}
+
+.hero-cta-pointer {
+  cursor: pointer;
+}
+
+.hero-scroll-indicator {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.hero-scroll-indicator-hidden {
+  opacity: 0;
 }
 

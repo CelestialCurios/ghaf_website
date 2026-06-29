@@ -25,7 +25,7 @@ const DARK_FILL = '#0a0a0a'
 const MAX_TRAIL = 28
 
 export default function CloudReveal({ revealSrc, darkSrc }: CloudRevealProps) {
-  const heroRef = useRef<HTMLDivElement>(null)
+  const heroRef = useRef<HTMLElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const trailRef = useRef<Blob[]>([])
   const mouseRef = useRef({ x: 0, y: 0 })
@@ -33,6 +33,25 @@ export default function CloudReveal({ revealSrc, darkSrc }: CloudRevealProps) {
   const reducedMotionRef = useRef(false)
 
   const [cursor, setCursor] = useState({ x: 0, y: 0, visible: false })
+  const [textRevealed, setTextRevealed] = useState(false)
+  const [scrollIndicatorHidden, setScrollIndicatorHidden] = useState(false)
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setTextRevealed(true), 15000)
+    return () => window.clearTimeout(timer)
+  }, [])
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const offset = window.scrollY * 0.3
+      heroRef.current?.style.setProperty('--parallax-offset', `-${offset}px`)
+      setScrollIndicatorHidden(window.scrollY > 80)
+    }
+
+    handleScroll()
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -66,7 +85,7 @@ export default function CloudReveal({ revealSrc, darkSrc }: CloudRevealProps) {
       const blob: Blob = {
         x,
         y,
-        r: touch ? 55 + Math.random() * 25 : 48 + Math.random() * 28,
+        r: touch ? 55 + Math.random() * 25 : 56 + Math.random() * 32,
         rx: 0.8 + Math.random() * 0.4,
         ry: 0.8 + Math.random() * 0.4,
         rot: Math.random() * Math.PI * 2,
@@ -178,9 +197,11 @@ export default function CloudReveal({ revealSrc, darkSrc }: CloudRevealProps) {
     }
   }, [])
 
+  const textStateClass = textRevealed ? 'text-revealed' : 'text-hidden'
+
   return (
     <>
-      <div
+      <section
         ref={heroRef}
         className="hero-reveal-section textured relative h-screen w-full overflow-hidden bg-[var(--color-hero-dark-bg)]"
       >
@@ -188,69 +209,80 @@ export default function CloudReveal({ revealSrc, darkSrc }: CloudRevealProps) {
           className="textured absolute inset-0 z-[1] bg-bg"
           style={{ backgroundColor: 'var(--color-bg)' }}
         >
-          <div className="absolute inset-0 z-[3]">
-            <p className="hero-side-text hero-side-text-left">
-              YOUR CARBON DETOX IS COMING
-            </p>
-
-            <div className="absolute inset-0 flex items-center justify-center">
-              <Image
-                src={revealSrc}
-                alt="Ghaf app"
-                width={220}
-                height={460}
-                className="block h-auto w-[220px]"
-                priority
-              />
-            </div>
-
-            <div className="hero-side-text hero-side-text-right">
-              <p className="hero-side-text-vertical">JOIN THE WAITLIST NOW</p>
-              <Button
-                variant="accent"
-                onClick={() => {
-                  document.getElementById('footer')?.scrollIntoView({ behavior: 'smooth' })
-                }}
-                style={{
-                  writingMode: 'vertical-rl',
-                  transform: 'rotate(180deg)',
-                  cursor: 'pointer',
-                }}
-              >
-                Join waitlist →
-              </Button>
-            </div>
+          <div className="hero-phone-parallax z-[3]">
+            <Image
+              src={revealSrc}
+              alt="Ghaf app"
+              width={320}
+              height={680}
+              className="hero-phone-image"
+              priority
+            />
           </div>
         </div>
 
+        <div className="hero-ambient hero-ambient-a" aria-hidden="true" />
+        <div className="hero-ambient hero-ambient-b" aria-hidden="true" />
+        <div className="hero-ambient hero-ambient-c" aria-hidden="true" />
+        <div className="hero-ambient hero-ambient-d" aria-hidden="true" />
+
         <canvas
+          id="cloud-canvas"
           ref={canvasRef}
-          className="pointer-events-none absolute inset-0 z-[4] h-full w-full"
+          className="pointer-events-none absolute inset-0 z-[6] h-full w-full"
           aria-hidden="true"
         />
 
-        <div className="pointer-events-none absolute inset-0 z-[5] flex items-center justify-center">
+        <div className="hero-phone-parallax z-[7] pointer-events-none">
           <Image
             src={darkSrc}
             alt=""
-            width={220}
-            height={460}
-            className="hero-phone-silhouette h-auto w-[220px]"
+            width={320}
+            height={680}
+            className="hero-phone-silhouette hero-phone-image"
             aria-hidden
           />
         </div>
 
-        <div className="pointer-events-none absolute inset-0 z-[5]">
-          <p className="hero-side-text hero-side-text-left hero-side-text-dark">
-            YOUR CARBON DETOX IS COMING
-          </p>
-          <div className="hero-side-text hero-side-text-right">
-            <p className="hero-side-text-vertical hero-side-text-dark">
-              JOIN THE WAITLIST NOW
-            </p>
+        <div
+          className={`hero-text-left ${textStateClass}`}
+        >
+          <Image
+            src="/assets/carbon_detox_message.png"
+            alt="Your carbon detox is coming"
+            width={180}
+            height={220}
+            className="block h-auto w-[180px]"
+          />
+        </div>
+
+        <div
+          className={`hero-text-right ${textStateClass}`}
+        >
+          <div className="hero-text-right-copy">
+            <p className="m-0">Join the</p>
+            <p className="m-0">waitlist now.</p>
+          </div>
+          <Button
+            variant="accent"
+            onClick={() => {
+              document.getElementById('footer')?.scrollIntoView({ behavior: 'smooth' })
+            }}
+            className="hero-cta-pointer"
+          >
+            Join waitlist →
+          </Button>
+        </div>
+
+        <div
+          className={`hero-scroll-indicator ${scrollIndicatorHidden ? 'hero-scroll-indicator-hidden' : ''}`}
+          aria-hidden="true"
+        >
+          <div className="hero-scroll-line">
+            <div className="hero-scroll-line-drop" />
           </div>
         </div>
-      </div>
+      </section>
 
       <CursorCloud x={cursor.x} y={cursor.y} visible={cursor.visible} />
     </>
