@@ -20,9 +20,9 @@ import WaitlistModal from '@/components/ui/WaitlistModal'
 const LOGO_LIGHT_SRC = '/assets/logo_light_png.png'
 const LOGO_DARK_SRC = '/assets/logo_dark.png'
 const LOGO_CROP_BOX =
-  'relative h-9 w-[7.25rem] overflow-hidden md:h-10 md:w-[8.25rem]'
+  'relative h-9 w-[10.5rem] overflow-hidden md:h-10 md:w-[12rem]'
 const LOGO_CROP_IMG =
-  'absolute left-1/2 top-[58%] h-[10.5rem] w-auto max-w-none -translate-x-1/2 -translate-y-1/2'
+  'absolute left-1/2 top-1/2 h-[7rem] w-auto max-w-none -translate-x-1/2 -translate-y-1/2 md:h-[7.5rem]'
 
 export default function GhafSite() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -99,7 +99,8 @@ export default function GhafSite() {
             }
         });
 
-        heroTl.to("#splash-logo-container", { scale: 0.25, y: -window.innerHeight * 0.42, x: -window.innerWidth * 0.35, opacity: 0, duration: 3 })
+        heroTl.to({}, { duration: 2 })
+              .to("#splash-logo-container", { scale: 0.25, y: -window.innerHeight * 0.42, x: -window.innerWidth * 0.35, opacity: 0, duration: 3 })
               .to("#nav-logo", { opacity: 1, y: 0, duration: 1 }, "-=1")
               .to("#hero-text-content", { opacity: 1, y: 0, duration: 3 }, "-=2")
               .to("#hero-phone-wrap", { opacity: 1, y: 0, scale: 1, duration: 4 }, "-=1.5");
