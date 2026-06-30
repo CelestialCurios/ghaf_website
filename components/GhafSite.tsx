@@ -146,7 +146,7 @@ export default function GhafSite() {
             }
         });
 
-        // Stage 1: Reveal team video frame
+        // Stage 1: Reveal horizontal frame with static team image
         teamTimeline.to("#team-asset-stage", {
             opacity: 1,
             y: 0,
@@ -154,22 +154,24 @@ export default function GhafSite() {
             duration: 2,
             ease: "power2.out"
         })
-        // Stage 2: Expand frame to fill viewport below header
+        // Stage 2: Linger on horizontal image at native aspect ratio
+        .to({}, { duration: 1.5 })
+        // Stage 3: Fade image, morph to portrait, cross-fade video
+        .to("#team-static-img", {
+            opacity: 0,
+            duration: 2,
+            ease: "power2.out"
+        })
         .to("#team-asset-stage", {
             width: () => {
               const maxH = window.innerHeight - navHeight - 8
               return Math.min(maxH * (9 / 16), window.innerWidth * 0.92, 420)
             },
             height: () => window.innerHeight - navHeight - 8,
+            aspectRatio: "9 / 16",
             duration: 2.5,
             ease: "power2.inOut"
-        }, "-=0.5")
-        // Stage 3: Fade out static image, cross-fade video
-        .to("#team-static-img", {
-            opacity: 0,
-            duration: 2.5,
-            ease: "power2.out"
-        })
+        }, "-=1.5")
         .to("#team-video-mask", {
             opacity: 0,
             duration: 2
@@ -365,9 +367,9 @@ export default function GhafSite() {
                 
                 <div className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(#2e4a36_1px,transparent_1px)] [background-size:24px_24px] opacity-[0.03] mix-blend-multiply"></div>
 
-                <div id="team-asset-stage" className="relative z-20 w-[min(88vw,320px)] translate-y-16 overflow-hidden rounded-2xl border border-neutral-200/50 bg-neutral-900 opacity-0 shadow-[0_20px_50px_rgba(0,0,0,0.15)] aspect-[9/16] md:w-[min(42vw,380px)]">
+                <div id="team-asset-stage" className="relative z-20 w-[min(90vw,56rem)] translate-y-16 overflow-hidden rounded-2xl border border-neutral-200/50 bg-neutral-900 opacity-0 shadow-[0_20px_50px_rgba(0,0,0,0.15)] aspect-[16/9]">
                     
-                    <img id="team-static-img" src="/assets/meet-the-team.jpg" alt="Renew-e Core Engineering Team Presentation" className="absolute inset-0 z-10 h-full w-full object-cover object-center transition-transform duration-300" loading="lazy" />
+                    <img id="team-static-img" src="/assets/meet-the-team.jpg" alt="Renew-e Core Engineering Team Presentation" className="absolute inset-0 z-10 h-full w-full object-contain object-center transition-transform duration-300" loading="lazy" />
                     
                     <div id="team-video-mask" className="pointer-events-none absolute inset-0 z-20 bg-black/40 opacity-0"></div>
 
