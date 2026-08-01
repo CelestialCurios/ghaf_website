@@ -511,9 +511,9 @@ export default function GhafSite() {
                 <div className="gallery-card">
                     <div className="rotate-1 rounded-2xl border border-neutral-200/70 bg-white p-3 shadow-[0_12px_36px_rgba(0,0,0,0.06)] transition-transform duration-500 hover:rotate-0 hover:scale-[1.02] md:p-4">
                         <div className="aspect-[3/4] overflow-hidden rounded-xl bg-neutral-100 sm:aspect-[4/5]">
-                            <img src="/assets/rahel.jpg" className="h-full w-full object-cover object-top" alt="Rahel describing our features" loading="lazy" />
+                            <img src="/assets/president.jpg" className="h-full w-full object-cover object-top" alt="Meeting the Khalifa University President to discuss Ghaf" loading="lazy" />
                         </div>
-                        <p className="mt-3 text-center text-[11px] font-bold uppercase tracking-wide text-neutral-400">Rahel describing our features</p>
+                        <p className="mt-3 text-center text-[11px] font-bold uppercase tracking-wide text-neutral-400">Meeting the Khalifa University President to discuss Ghaf</p>
                     </div>
                 </div>
 
@@ -547,9 +547,9 @@ export default function GhafSite() {
                 <div className="gallery-card">
                     <div className="rotate-1 rounded-2xl border border-neutral-200/70 bg-white p-3 shadow-[0_12px_36px_rgba(0,0,0,0.06)] transition-transform duration-500 hover:rotate-0 hover:scale-[1.02] md:p-4">
                         <div className="aspect-[4/3] overflow-hidden rounded-xl bg-neutral-100">
-                            <img src="/assets/president.jpg" className="h-full w-full object-cover" alt="Meeting the Khalifa University President to discuss Ghaf" loading="lazy" />
+                            <img src="/assets/rahel.jpg" className="h-full w-full object-cover" alt="Rahel describing our features" loading="lazy" />
                         </div>
-                        <p className="mt-3 text-center text-[11px] font-bold uppercase tracking-wide text-neutral-400">Meeting the Khalifa University President to discuss Ghaf</p>
+                        <p className="mt-3 text-center text-[11px] font-bold uppercase tracking-wide text-neutral-400">Rahel describing our features</p>
                     </div>
                 </div>
 
