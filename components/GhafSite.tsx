@@ -28,6 +28,9 @@ export default function GhafSite() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const waveRafRef = useRef<number>(0)
   const [modalOpen, setModalOpen] = useState(false)
+  const [videoMuted, setVideoMuted] = useState(true)
+  const [showVideoMute, setShowVideoMute] = useState(false)
+  const videoMutedRef = useRef(true)
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger)
@@ -111,66 +114,60 @@ export default function GhafSite() {
         // -------------------------------------------------------------
         const videoElement = document.getElementById('team-cinematic-video') as HTMLVideoElement | null
 
-        // Browsers pause the video if you unmute without a prior user gesture.
-        // Play muted always; unmute only after click/tap/key.
-        let audioUnlocked = false
         let teamVideoInRange = false
         let playRequestInFlight = false
 
+        const setMuteUi = (muted: boolean) => {
+            videoMutedRef.current = muted
+            setVideoMuted(muted)
+        }
+
         const pauseTeamVideo = () => {
-            if (!videoElement || videoElement.paused) return
+            if (!videoElement) return
             playRequestInFlight = false
-            videoElement.pause()
-            videoElement.muted = true
+            if (!videoElement.paused) videoElement.pause()
+            teamVideoInRange = false
+            setShowVideoMute(false)
         }
 
         const playTeamVideo = () => {
             if (!videoElement) return
+            const wantMuted = videoMutedRef.current
             if (!videoElement.paused) {
-                if (audioUnlocked) {
-                    videoElement.muted = false
-                    videoElement.volume = 1
-                } else {
-                    videoElement.muted = true
-                }
+                videoElement.muted = wantMuted
+                if (!wantMuted) videoElement.volume = 1
                 return
             }
             if (playRequestInFlight) return
             playRequestInFlight = true
-            // Keep muted for autoplay policy — never unmute inside play().then()
-            videoElement.muted = true
+            // Autoplay requires muted unless the user toggled unmute via the button
+            videoElement.muted = wantMuted
             void videoElement.play()
                 .then(() => {
                     playRequestInFlight = false
-                    if (audioUnlocked) {
-                        videoElement.muted = false
-                        videoElement.volume = 1
-                    }
+                    videoElement.muted = videoMutedRef.current
+                    if (!videoMutedRef.current) videoElement.volume = 1
                 })
                 .catch(() => {
                     playRequestInFlight = false
+                    // Fall back to muted autoplay if unmuted play was blocked
+                    videoElement.muted = true
+                    setMuteUi(true)
+                    void videoElement.play().catch(() => {})
                 })
         }
 
-        const unlockAudio = () => {
-            audioUnlocked = true
-            if (teamVideoInRange && videoElement) {
-                videoElement.muted = false
-                videoElement.volume = 1
-                if (videoElement.paused) playTeamVideo()
-            }
-        }
-
-        const syncTeamVideoPlayback = () => {
+        const syncTeamVideoPlayback = (self?: ScrollTrigger) => {
             if (!videoElement) return
             const t = teamTimeline.time()
             const readyAt = Number(teamTimeline.labels.videoReady ?? 0)
-            // Hysteresis so scrub near the label does not play/pause thrash
-            if (t >= readyAt) {
+            const sectionActive = self ? self.isActive : true
+
+            if (sectionActive && t >= readyAt) {
                 teamVideoInRange = true
+                setShowVideoMute(true)
                 playTeamVideo()
-            } else if (t < readyAt - 0.35) {
-                teamVideoInRange = false
+            } else if (!sectionActive || t < readyAt - 0.35) {
                 pauseTeamVideo()
             }
         }
@@ -183,15 +180,9 @@ export default function GhafSite() {
                 start: 'top top',
                 end: 'bottom bottom',
                 scrub: true,
-                onLeave: () => {
-                    teamVideoInRange = false
-                    pauseTeamVideo()
-                },
-                onLeaveBack: () => {
-                    teamVideoInRange = false
-                    pauseTeamVideo()
-                },
-                onUpdate: syncTeamVideoPlayback,
+                onLeave: pauseTeamVideo,
+                onLeaveBack: pauseTeamVideo,
+                onUpdate: (self) => syncTeamVideoPlayback(self),
             },
         })
 
@@ -236,10 +227,22 @@ export default function GhafSite() {
         .to({}, { duration: 5 })
         .addLabel('videoHoldEnd')
 
-        const onTeamScrollEnd = () => syncTeamVideoPlayback()
+        const teamStage = document.getElementById('team-asset-stage')
+        const teamVisibility = new IntersectionObserver(
+            ([entry]) => {
+                if (!entry || entry.intersectionRatio >= 0.2) return
+                pauseTeamVideo()
+            },
+            { threshold: [0, 0.2, 0.5] }
+        )
+        if (teamStage) teamVisibility.observe(teamStage)
+
+        const onTeamScrollEnd = () => {
+            const st = teamTimeline.scrollTrigger
+            syncTeamVideoPlayback(st)
+            if (st && !st.isActive) pauseTeamVideo()
+        }
         ScrollTrigger.addEventListener('scrollEnd', onTeamScrollEnd)
-        window.addEventListener('pointerdown', unlockAudio, { passive: true })
-        window.addEventListener('keydown', unlockAudio)
 
         // Journey gallery — expand from scattered offsets into final grid slots
         gsap.utils.toArray<Element>('.gallery-card').forEach((card, index) => {
@@ -352,9 +355,8 @@ export default function GhafSite() {
       cancelAnimationFrame(waveRafRef.current)
       window.removeEventListener('resize', resizeCanvas)
       window.removeEventListener('resize', syncNavHeight)
-      window.removeEventListener('pointerdown', unlockAudio)
-      window.removeEventListener('keydown', unlockAudio)
       ScrollTrigger.removeEventListener('scrollEnd', onTeamScrollEnd)
+      teamVisibility.disconnect()
       ScrollTrigger.getAll().forEach((t) => t.kill())
     }
   }, [])
@@ -437,6 +439,27 @@ export default function GhafSite() {
                     <video id="team-cinematic-video" className="pointer-events-none absolute inset-0 z-30 h-full w-full object-cover object-center opacity-0" loop muted playsInline preload="auto">
                         <source src="/assets/ghaf_video_mbrif.mp4" type="video/mp4" />
                     </video>
+
+                    <button
+                        type="button"
+                        id="team-video-mute-btn"
+                        onClick={() => {
+                            const video = document.getElementById('team-cinematic-video') as HTMLVideoElement | null
+                            if (!video) return
+                            const nextMuted = !video.muted
+                            video.muted = nextMuted
+                            if (!nextMuted) video.volume = 1
+                            videoMutedRef.current = nextMuted
+                            setVideoMuted(nextMuted)
+                            if (video.paused) void video.play().catch(() => {})
+                        }}
+                        className={`absolute right-4 top-4 z-50 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/45 transition-opacity duration-300 hover:text-white/70 md:right-5 md:top-5 ${
+                            showVideoMute ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'
+                        }`}
+                        aria-label={videoMuted ? 'Unmute video' : 'Mute video'}
+                    >
+                        {videoMuted ? 'unmute' : 'mute'}
+                    </button>
 
                     <div id="team-video-typography" className="pointer-events-none absolute bottom-6 left-6 z-40 translate-y-4 transform opacity-0 md:bottom-10 md:left-10">
                         <span className="mb-1 block font-mono text-xs font-bold uppercase tracking-widest text-lime-400">// CORES IN ACTION</span>
