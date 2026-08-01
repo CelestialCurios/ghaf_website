@@ -6,7 +6,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import {
   ChevronRight,
   ExternalLink,
-  Target,
 } from 'lucide-react'
 import WaitlistModal from '@/components/ui/WaitlistModal'
 import PhoneScreen from '@/components/ui/PhoneScreen'
@@ -607,9 +606,7 @@ export default function GhafSite() {
                         <h4 className="text-5xl font-black text-white tracking-tight mb-2">57%</h4>
                         <p className="text-emerald-100/80 text-sm font-medium leading-relaxed">Of the country&apos;s entire ecological footprint stems entirely from domestic household choices and utility usage parameters.</p>
                     </div>
-                    <div className="mt-6 flex items-center gap-2 text-xs font-bold text-lime-400 uppercase tracking-wider">
-                        <Target className="w-4 h-4" /> Direct Consumer Power
-                    </div>
+                    <div className="mt-6 pt-4 border-t border-white/10 text-xs font-bold text-lime-400/70 uppercase tracking-widest">According to footprintnetwork.org</div>
                 </div>
             </div>
         </section>
@@ -628,7 +625,7 @@ export default function GhafSite() {
                 <div className="space-y-4 text-block">
                     <span className="text-xs font-mono font-bold text-emerald-600 tracking-wider">01 // IDENTITY</span>
                     <h3 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight">Personalize</h3>
-                    <p className="text-slate-600 text-lg leading-relaxed font-medium">Adopt an endangered companion framework tailored directly to mirror your climate decisions dynamically.</p>
+                    <p className="text-slate-600 text-lg leading-relaxed font-medium">Adopt an endangered companion as your avatar through your carbon conscious journey</p>
                 </div>
                 <div className="flex justify-center phone-block">
                     <PhoneScreen
@@ -650,7 +647,7 @@ export default function GhafSite() {
                 <div className="space-y-4 text-block md:order-2 order-1">
                     <span className="text-xs font-mono font-bold text-emerald-600 tracking-wider">02 // ECOSYSTEM</span>
                     <h3 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight">Connect & Grow</h3>
-                    <p className="text-slate-600 text-lg leading-relaxed font-medium">Coordinate lifestyle tracking targets together with private micro-brackets and gamify your sustainability experience.</p>
+                    <p className="text-slate-600 text-lg leading-relaxed font-medium">Coordinate with like-minded users, compare lifestyles targets and gamify your sustainability experience.</p>
                 </div>
             </div>
 
@@ -774,7 +771,7 @@ export default function GhafSite() {
             <div className={`${LOGO_CROP_BOX} shrink-0`}>
                 <img src={LOGO_LIGHT_SRC} alt="Ghaf Logo" className={LOGO_CROP_IMG} loading="lazy" />
             </div>
-            <p className="font-medium">&copy; 2026 Renew-e Ecosystem. Built for the future of the UAE consumer landscape. All rights reserved.</p>
+            <p className="font-medium">&copy; 2026 Ghaf-App. Built for the future of the UAE consumer landscape. All rights reserved.</p>
         </div>
     </footer>
       <WaitlistModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
