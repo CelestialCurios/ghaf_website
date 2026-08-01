@@ -103,7 +103,8 @@ export default function GhafSite() {
               .to("#splash-logo-container", { scale: 0.25, y: -window.innerHeight * 0.42, x: -window.innerWidth * 0.35, opacity: 0, duration: 3 })
               .to("#nav-logo", { opacity: 1, y: 0, duration: 1 }, "-=1")
               .to("#hero-text-content", { opacity: 1, y: 0, duration: 3 }, "-=2")
-              .to("#hero-phone-wrap", { opacity: 1, y: 0, scale: 1, duration: 4 }, "-=1.5");
+              .to({}, { duration: 2.5 })
+              .to("#hero-phone-wrap", { opacity: 1, y: 0, scale: 1, duration: 4 });
 
         // -------------------------------------------------------------
         // NEW DEEP STORYTELLING MEET THE TEAM TRIGGER ENGINE
@@ -116,93 +117,115 @@ export default function GhafSite() {
             videoElement.muted = true
         }
 
+        const playTeamVideo = () => {
+            if (!videoElement) return
+            if (videoElement.paused) {
+                videoElement.muted = true
+                void videoElement.play().then(() => {
+                    videoElement.muted = false
+                    videoElement.volume = 1
+                }).catch((e) => console.log('Team video play deferred:', e))
+            } else if (videoElement.muted) {
+                videoElement.muted = false
+                videoElement.volume = 1
+            }
+        }
+
+        const syncTeamVideoPlayback = () => {
+            if (!videoElement) return
+            const t = teamTimeline.time()
+            const readyAt = teamTimeline.labels.videoReady as number
+            const holdEndAt = teamTimeline.labels.videoHoldEnd as number
+            if (t >= readyAt && t < holdEndAt) {
+                playTeamVideo()
+            } else {
+                pauseTeamVideo()
+            }
+        }
+
         const navHeight = document.getElementById('global-nav')?.offsetHeight ?? 72
 
         const teamTimeline = gsap.timeline({
             scrollTrigger: {
-                trigger: "#team-sticky-trigger",
-                start: "top top",
-                end: "bottom bottom",
+                trigger: '#team-sticky-trigger',
+                start: 'top top',
+                end: 'bottom bottom',
                 scrub: true,
                 onLeave: pauseTeamVideo,
                 onLeaveBack: pauseTeamVideo,
-                onUpdate: (self) => {
-                    if (!videoElement) return
-                    if (self.progress > 0.45 && self.progress < 0.92) {
-                        if (videoElement.paused) {
-                            videoElement.muted = true
-                            void videoElement.play().then(() => {
-                                videoElement.muted = false
-                                videoElement.volume = 1
-                            }).catch((e) => console.log("Autoplay context structural pause deferred:", e))
-                        } else if (videoElement.muted) {
-                            videoElement.muted = false
-                            videoElement.volume = 1
-                        }
-                    } else {
-                        pauseTeamVideo()
-                    }
-                }
-            }
-        });
+                onUpdate: syncTeamVideoPlayback,
+            },
+        })
 
         // Stage 1: Reveal horizontal frame with static team image
-        teamTimeline.to("#team-asset-stage", {
+        teamTimeline.to('#team-asset-stage', {
             opacity: 1,
             y: 0,
             scale: 1,
             duration: 2,
-            ease: "power2.out"
+            ease: 'power2.out',
         })
         // Stage 2: Linger on horizontal image at native aspect ratio
         .to({}, { duration: 1.5 })
-        // Stage 3: Fade image, morph to portrait, cross-fade video
-        .to("#team-static-img", {
+        // Stage 3: Fade image while morphing to portrait and revealing video
+        .to('#team-static-img', {
             opacity: 0,
             duration: 2,
-            ease: "power2.out"
+            ease: 'power2.out',
         })
-        .to("#team-asset-stage", {
+        .to('#team-asset-stage', {
             width: () => {
               const maxH = window.innerHeight - navHeight - 8
               return Math.min(maxH * (9 / 16), window.innerWidth * 0.92, 420)
             },
             height: () => window.innerHeight - navHeight - 8,
-            aspectRatio: "9 / 16",
+            aspectRatio: '9 / 16',
             duration: 2.5,
-            ease: "power2.inOut"
-        }, "-=1.5")
-        .to("#team-video-mask", {
-            opacity: 0,
-            duration: 2
-        }, "-=2")
-        .to("#team-cinematic-video", {
+            ease: 'power2.inOut',
+        }, '<')
+        .to('#team-cinematic-video', {
             opacity: 1,
-            duration: 2.5
-        }, "-=2.5")
-        // Stage 4: Typography overlay
-        .to("#team-video-typography", {
+            duration: 2.5,
+        }, '<')
+        .to('#team-video-typography', {
             opacity: 1,
             y: 0,
-            duration: 1.5
-        }, "-=1")
-        .to({}, { duration: 1 });
+            duration: 1,
+        }, '-=0.5')
+        // Portrait frame settled — start playback
+        .addLabel('videoReady')
+        // Stage 4: Scroll buffer — extra scroll holds the frame while video plays
+        .to({}, { duration: 3 })
+        .addLabel('videoHoldEnd')
 
         // Immersive Lando Norris Style Journey Gallery Movement Engine Matrix
         gsap.utils.toArray<Element>(".gallery-card").forEach((card) => {
             const speedModifier = parseFloat(card.getAttribute("data-parallax-speed") ?? '') || 0.1;
             const horizontalDrift = parseFloat(card.getAttribute("data-drift-x") ?? '') || 0;
-            
-            gsap.fromTo(card, 
-                { 
+
+            // Soft fade only across the bottom 5% of the viewport — no lingering low-opacity blur
+            gsap.fromTo(card,
+                { opacity: 0 },
+                {
+                    opacity: 1,
+                    ease: "none",
+                    scrollTrigger: {
+                        trigger: card,
+                        start: "top bottom",
+                        end: "top 95%",
+                        scrub: true,
+                    }
+                }
+            );
+
+            gsap.fromTo(card,
+                {
                     y: window.innerHeight * speedModifier * 0.5,
-                    opacity: 0.3,
                     scale: 0.95
                 },
                 {
                     y: -window.innerHeight * speedModifier * 1.5,
                     x: horizontalDrift,
-                    opacity: 1,
                     scale: 1,
                     scrollTrigger: {
                         trigger: card,
@@ -362,7 +385,7 @@ export default function GhafSite() {
             </p>
         </div>
 
-        <div id="team-sticky-trigger" className="relative h-[280vh] w-full">
+        <div id="team-sticky-trigger" className="relative h-[340vh] w-full">
             <div className="sticky top-[var(--nav-h,4.5rem)] flex h-[calc(100svh-var(--nav-h,4.5rem))] w-full items-center justify-center overflow-hidden bg-white px-4">
                 
                 <div className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(#2e4a36_1px,transparent_1px)] [background-size:24px_24px] opacity-[0.03] mix-blend-multiply"></div>
@@ -373,7 +396,7 @@ export default function GhafSite() {
                     
                     <div id="team-video-mask" className="pointer-events-none absolute inset-0 z-20 bg-black/40 opacity-0"></div>
 
-                    <video id="team-cinematic-video" className="pointer-events-none absolute inset-0 z-30 h-full w-full object-cover object-center opacity-0" loop muted playsInline>
+                    <video id="team-cinematic-video" className="pointer-events-none absolute inset-0 z-30 h-full w-full object-cover object-center opacity-0" loop muted playsInline preload="auto">
                         <source src="/assets/ghaf_video_mbrif.mp4" type="video/mp4" />
                     </video>
 
@@ -386,86 +409,86 @@ export default function GhafSite() {
             </div>
         </div>
 
-        <div id="journey-gallery-track" className="relative w-full bg-neutral-50 py-32 overflow-hidden border-t border-neutral-200/40">
+        <div id="journey-gallery-track" className="relative w-full bg-neutral-50 pt-32 pb-24 overflow-hidden border-t border-neutral-200/40">
             <div className="max-w-6xl mx-auto px-6 mb-24 relative z-10">
                 <span className="text-xs font-black tracking-widest text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full uppercase inline-block mb-3">// Historical Compilations</span>
                 <h3 className="text-3xl md:text-5xl font-black tracking-tight text-slate-900 leading-tight">Our Journey In Memories</h3>
                 <p className="text-slate-500 text-sm md:text-base font-medium max-w-md mt-2">A fluid archive of critical milestones, development workshops, and collaborative regional creation frames.</p>
             </div>
 
-            <div className="relative w-full min-h-[140vh] md:min-h-[180vh] px-4 max-w-7xl mx-auto">
+            <div className="relative w-full min-h-[200vh] md:min-h-[260vh] px-4 max-w-7xl mx-auto pb-[20vh]">
                 
                 <div className="gallery-card absolute left-[5%] top-[5%] w-[42%] md:w-[28%] z-30" data-parallax-speed="0.15" data-drift-x="-20">
                     <div className="bg-white p-2 md:p-3 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.05)] border border-neutral-200/60 transform -rotate-2 hover:rotate-0 hover:scale-[1.03] transition-all duration-500">
                         <div className="overflow-hidden rounded-xl aspect-[4/3] bg-neutral-100">
-                            <img src="/assets/PHOTO-2025-09-14-19-22-12-2.jpg" className="w-full h-full object-cover" alt="Journey Memory Snapshot" loading="lazy" />
+                            <img src="/assets/first_pitch_gov.jpg" className="w-full h-full object-cover" alt="First Attempt at Pitch@Gov 2024" loading="lazy" />
                         </div>
-                        <p className="text-[11px] font-bold text-neutral-400 mt-2 tracking-wide uppercase text-center">Development Sync // 01</p>
+                        <p className="text-[11px] font-bold text-neutral-400 mt-2 tracking-wide uppercase text-center">First Attempt at Pitch@Gov 2024</p>
                     </div>
                 </div>
 
                 <div className="gallery-card absolute right-[8%] top-[0%] w-[46%] md:w-[32%] z-10" data-parallax-speed="0.05" data-drift-x="30">
                     <div className="bg-white p-2 md:p-4 rounded-2xl shadow-[0_15px_40px_rgba(0,0,0,0.06)] border border-neutral-200/60 transform rotate-3 hover:rotate-0 hover:scale-[1.03] transition-all duration-500">
                         <div className="overflow-hidden rounded-xl aspect-[3/4] bg-neutral-100">
-                            <img src="/assets/PHOTO-2025-09-14-19-22-13-3.jpg" className="w-full h-full object-cover" alt="Journey Memory Snapshot" loading="lazy" />
+                            <img src="/assets/rahel.jpg" className="w-full h-full object-cover" alt="Rahel describing our features" loading="lazy" />
                         </div>
-                        <p className="text-[11px] font-bold text-neutral-400 mt-2.5 tracking-wide uppercase text-center">Strategy Workshop // AUH</p>
+                        <p className="text-[11px] font-bold text-neutral-400 mt-2.5 tracking-wide uppercase text-center">Rahel describing our features</p>
                     </div>
                 </div>
 
                 <div className="gallery-card absolute left-[30%] top-[30%] w-[38%] md:w-[24%] z-40" data-parallax-speed="0.25" data-drift-x="10">
                     <div className="bg-white p-2 rounded-2xl shadow-[0_20px_45px_rgba(0,0,0,0.08)] border border-neutral-200/80 transform rotate-1 hover:rotate-0 hover:scale-[1.03] transition-all duration-500">
                         <div className="overflow-hidden rounded-xl aspect-square bg-neutral-100">
-                            <img src="/assets/PHOTO-2025-09-14-19-22-13-4.jpg" className="w-full h-full object-cover" alt="Journey Memory Snapshot" loading="lazy" />
+                            <img src="/assets/meet-the-team.jpg" className="w-full h-full object-cover" alt="The Ghaf team winning Pitch@Gov" loading="lazy" />
                         </div>
-                        <p className="text-[10px] font-bold text-neutral-400 mt-2 tracking-wide uppercase text-center">UI/UX Wireframes Blueprint</p>
+                        <p className="text-[10px] font-bold text-neutral-400 mt-2 tracking-wide uppercase text-center">The Ghaf team winning Pitch@Gov</p>
                     </div>
                 </div>
 
                 <div className="gallery-card absolute right-[2%] top-[45%] w-[40%] md:w-[26%] z-20" data-parallax-speed="0.10" data-drift-x="25">
                     <div className="bg-white p-2 md:p-3 rounded-2xl shadow-[0_12px_35px_rgba(0,0,0,0.05)] border border-neutral-200/60 transform -rotate-3 hover:rotate-0 hover:scale-[1.03] transition-all duration-500">
                         <div className="overflow-hidden rounded-xl aspect-[4/3] bg-neutral-100">
-                            <img src="/assets/PHOTO-2025-09-14-19-22-13-5.jpg" className="w-full h-full object-cover" alt="Journey Memory Snapshot" loading="lazy" />
+                            <img src="/assets/nevan.jpeg" className="w-full h-full object-cover" alt="Nevan concluding our pitch" loading="lazy" />
                         </div>
-                        <p className="text-[11px] font-bold text-neutral-400 mt-2 tracking-wide uppercase text-center">Regional Testing Round</p>
+                        <p className="text-[11px] font-bold text-neutral-400 mt-2 tracking-wide uppercase text-center">Nevan concluding our pitch</p>
                     </div>
                 </div>
 
                 <div className="gallery-card absolute left-[5%] top-[55%] w-[44%] md:w-[30%] z-0" data-parallax-speed="0.02" data-drift-x="-15">
                     <div className="bg-white p-2 md:p-4 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.04)] border border-neutral-200/40 transform rotate-2 hover:rotate-0 hover:scale-[1.03] transition-all duration-500">
                         <div className="overflow-hidden rounded-xl aspect-video bg-neutral-100">
-                            <img src="/assets/PHOTO-2025-09-14-19-22-13.jpg" className="w-full h-full object-cover" alt="Journey Memory Snapshot" loading="lazy" />
+                            <img src="/assets/naqiyah.jpeg" className="w-full h-full object-cover" alt="Naqiyah explaining the business plan" loading="lazy" />
                         </div>
-                        <p className="text-[11px] font-bold text-neutral-400 mt-2 tracking-wide uppercase text-center">Ecosystem Mapping Track</p>
+                        <p className="text-[11px] font-bold text-neutral-400 mt-2 tracking-wide uppercase text-center">Naqiyah explaining the business plan</p>
                     </div>
                 </div>
 
                 <div className="gallery-card absolute left-[26%] top-[75%] w-[48%] md:w-[34%] z-20" data-parallax-speed="0.12" data-drift-x="-25">
                     <div className="bg-white p-2 md:p-4 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.07)] border border-neutral-200/60 transform -rotate-1 hover:rotate-0 hover:scale-[1.03] transition-all duration-500">
                         <div className="overflow-hidden rounded-xl aspect-[16/10] bg-neutral-100">
-                            <img src="/assets/PHOTO-2025-09-14-19-22-14-2.jpg" className="w-full h-full object-cover" alt="Journey Memory Snapshot" loading="lazy" />
+                            <img src="/assets/president.jpg" className="w-full h-full object-cover" alt="Meeting the Khalifa University President to discuss Ghaf" loading="lazy" />
                         </div>
-                        <p className="text-[11px] font-bold text-neutral-400 mt-2.5 tracking-wide uppercase text-center">Validation Assemblies // Review</p>
+                        <p className="text-[11px] font-bold text-neutral-400 mt-2.5 tracking-wide uppercase text-center">Meeting the Khalifa University President to discuss Ghaf</p>
                     </div>
                 </div>
 
                 <div className="gallery-card absolute right-[10%] top-[72%] w-[42%] md:w-[25%] z-30" data-parallax-speed="0.22" data-drift-x="20">
                     <div className="bg-white p-2 rounded-2xl shadow-[0_25px_50px_rgba(0,0,0,0.09)] border border-neutral-200/80 transform rotate-4 hover:rotate-0 hover:scale-[1.03] transition-all duration-500">
                         <div className="overflow-hidden rounded-xl aspect-[3/4] bg-neutral-100">
-                            <img src="/assets/PHOTO-2025-09-14-19-22-14-3.jpg" className="w-full h-full object-cover" alt="Journey Memory Snapshot" loading="lazy" />
+                            <img src="/assets/full_team.jpeg" className="w-full h-full object-cover" alt="The team on pitch day" loading="lazy" />
                         </div>
-                        <p className="text-[10px] font-bold text-neutral-400 mt-2 tracking-wide uppercase text-center">Regional Strategy Pillars</p>
+                        <p className="text-[10px] font-bold text-neutral-400 mt-2 tracking-wide uppercase text-center">The team on pitch day</p>
                     </div>
                 </div>
 
-                <div className="gallery-card absolute left-[15%] md:left-[25%] top-[98%] w-[70%] md:w-[50%] z-40 pb-12" data-parallax-speed="0.08" data-drift-x="0">
+                <div className="gallery-card absolute left-[15%] md:left-[25%] top-[72%] md:top-[75%] w-[70%] md:w-[50%] z-40" data-parallax-speed="0.08" data-drift-x="0">
                     <div className="bg-white p-3 md:p-5 rounded-3xl shadow-[0_30px_70px_rgba(0,0,0,0.12)] border border-neutral-200/90 transform hover:scale-[1.01] transition-transform duration-500">
                         <div className="overflow-hidden rounded-2xl aspect-video bg-neutral-100">
-                            <img src="/assets/PHOTO-2025-09-14-20-50-42.jpg" className="w-full h-full object-cover" alt="Grand Final Milestone Assembly View" loading="lazy" />
+                            <img src="/assets/meet-the-team.jpg" className="w-full h-full object-cover" alt="Meet the Winning Team" loading="lazy" />
                         </div>
                         <div className="mt-4 flex justify-between items-center px-1">
                             <div>
-                                <h5 className="text-sm md:text-base font-bold text-neutral-800 tracking-tight">The Winning Presentation Deck Execution</h5>
+                                <h5 className="text-sm md:text-base font-bold text-neutral-800 tracking-tight">Meet the Winning Team</h5>
                                 <p className="text-[11px] text-emerald-600 font-bold tracking-wider uppercase mt-0.5">Pitch@Gov Award Grand Finale</p>
                             </div>
                             <span className="text-xs bg-emerald-50 text-emerald-700 font-black px-3 py-1 rounded-full uppercase tracking-widest hidden sm:inline-block">1st Place</span>
