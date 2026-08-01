@@ -111,34 +111,66 @@ export default function GhafSite() {
         // -------------------------------------------------------------
         const videoElement = document.getElementById('team-cinematic-video') as HTMLVideoElement | null
 
+        // Browsers pause the video if you unmute without a prior user gesture.
+        // Play muted always; unmute only after click/tap/key.
+        let audioUnlocked = false
+        let teamVideoInRange = false
+        let playRequestInFlight = false
+
         const pauseTeamVideo = () => {
-            if (!videoElement) return
+            if (!videoElement || videoElement.paused) return
+            playRequestInFlight = false
             videoElement.pause()
             videoElement.muted = true
         }
 
         const playTeamVideo = () => {
             if (!videoElement) return
-            if (videoElement.paused) {
-                videoElement.muted = true
-                void videoElement.play().then(() => {
+            if (!videoElement.paused) {
+                if (audioUnlocked) {
                     videoElement.muted = false
                     videoElement.volume = 1
-                }).catch((e) => console.log('Team video play deferred:', e))
-            } else if (videoElement.muted) {
+                } else {
+                    videoElement.muted = true
+                }
+                return
+            }
+            if (playRequestInFlight) return
+            playRequestInFlight = true
+            // Keep muted for autoplay policy — never unmute inside play().then()
+            videoElement.muted = true
+            void videoElement.play()
+                .then(() => {
+                    playRequestInFlight = false
+                    if (audioUnlocked) {
+                        videoElement.muted = false
+                        videoElement.volume = 1
+                    }
+                })
+                .catch(() => {
+                    playRequestInFlight = false
+                })
+        }
+
+        const unlockAudio = () => {
+            audioUnlocked = true
+            if (teamVideoInRange && videoElement) {
                 videoElement.muted = false
                 videoElement.volume = 1
+                if (videoElement.paused) playTeamVideo()
             }
         }
 
         const syncTeamVideoPlayback = () => {
             if (!videoElement) return
             const t = teamTimeline.time()
-            const readyAt = teamTimeline.labels.videoReady as number
-            const holdEndAt = teamTimeline.labels.videoHoldEnd as number
-            if (t >= readyAt && t < holdEndAt) {
+            const readyAt = Number(teamTimeline.labels.videoReady ?? 0)
+            // Hysteresis so scrub near the label does not play/pause thrash
+            if (t >= readyAt) {
+                teamVideoInRange = true
                 playTeamVideo()
-            } else {
+            } else if (t < readyAt - 0.35) {
+                teamVideoInRange = false
                 pauseTeamVideo()
             }
         }
@@ -151,8 +183,14 @@ export default function GhafSite() {
                 start: 'top top',
                 end: 'bottom bottom',
                 scrub: true,
-                onLeave: pauseTeamVideo,
-                onLeaveBack: pauseTeamVideo,
+                onLeave: () => {
+                    teamVideoInRange = false
+                    pauseTeamVideo()
+                },
+                onLeaveBack: () => {
+                    teamVideoInRange = false
+                    pauseTeamVideo()
+                },
                 onUpdate: syncTeamVideoPlayback,
             },
         })
@@ -187,55 +225,52 @@ export default function GhafSite() {
             opacity: 1,
             duration: 2.5,
         }, '<')
+        // Start playback early — once video is partially visible mid-morph
+        .addLabel('videoReady', '<+=0.8')
         .to('#team-video-typography', {
             opacity: 1,
             y: 0,
             duration: 1,
         }, '-=0.5')
-        // Portrait frame settled — start playback
-        .addLabel('videoReady')
-        // Stage 4: Scroll buffer — extra scroll holds the frame while video plays
-        .to({}, { duration: 3 })
+        // Stage 4: Longer scroll buffer while the settled portrait plays
+        .to({}, { duration: 5 })
         .addLabel('videoHoldEnd')
 
-        // Immersive Lando Norris Style Journey Gallery Movement Engine Matrix
-        gsap.utils.toArray<Element>(".gallery-card").forEach((card) => {
-            const speedModifier = parseFloat(card.getAttribute("data-parallax-speed") ?? '') || 0.1;
-            const horizontalDrift = parseFloat(card.getAttribute("data-drift-x") ?? '') || 0;
+        const onTeamScrollEnd = () => syncTeamVideoPlayback()
+        ScrollTrigger.addEventListener('scrollEnd', onTeamScrollEnd)
+        window.addEventListener('pointerdown', unlockAudio, { passive: true })
+        window.addEventListener('keydown', unlockAudio)
 
-            // Soft fade only across the bottom 5% of the viewport — no lingering low-opacity blur
-            gsap.fromTo(card,
-                { opacity: 0 },
-                {
-                    opacity: 1,
-                    ease: "none",
-                    scrollTrigger: {
-                        trigger: card,
-                        start: "top bottom",
-                        end: "top 95%",
-                        scrub: true,
-                    }
-                }
-            );
+        // Journey gallery — expand from scattered offsets into final grid slots
+        gsap.utils.toArray<Element>('.gallery-card').forEach((card, index) => {
+            const fromLeft = index % 2 === 0
+            const depth = (index % 4) + 1
 
-            gsap.fromTo(card,
+            gsap.fromTo(
+                card,
                 {
-                    y: window.innerHeight * speedModifier * 0.5,
-                    scale: 0.95
+                    opacity: 0,
+                    x: fromLeft ? -90 - depth * 18 : 90 + depth * 18,
+                    y: 120 + depth * 28,
+                    scale: 0.82,
+                    rotate: fromLeft ? -6 : 6,
                 },
                 {
-                    y: -window.innerHeight * speedModifier * 1.5,
-                    x: horizontalDrift,
+                    opacity: 1,
+                    x: 0,
+                    y: 0,
                     scale: 1,
+                    rotate: 0,
+                    ease: 'none',
                     scrollTrigger: {
                         trigger: card,
-                        start: "top bottom",
-                        end: "bottom top",
-                        scrub: 1.2
-                    }
+                        start: 'top bottom',
+                        end: 'top 55%',
+                        scrub: 1.15,
+                    },
                 }
-            );
-        });
+            )
+        })
 
         // -------------------------------------------------------------
         // BACKGROUND TRANSLATION & ALTERNATING DATA CARDS
@@ -317,6 +352,9 @@ export default function GhafSite() {
       cancelAnimationFrame(waveRafRef.current)
       window.removeEventListener('resize', resizeCanvas)
       window.removeEventListener('resize', syncNavHeight)
+      window.removeEventListener('pointerdown', unlockAudio)
+      window.removeEventListener('keydown', unlockAudio)
+      ScrollTrigger.removeEventListener('scrollEnd', onTeamScrollEnd)
       ScrollTrigger.getAll().forEach((t) => t.kill())
     }
   }, [])
@@ -385,7 +423,7 @@ export default function GhafSite() {
             </p>
         </div>
 
-        <div id="team-sticky-trigger" className="relative h-[340vh] w-full">
+        <div id="team-sticky-trigger" className="relative h-[400vh] w-full">
             <div className="sticky top-[var(--nav-h,4.5rem)] flex h-[calc(100svh-var(--nav-h,4.5rem))] w-full items-center justify-center overflow-hidden bg-white px-4">
                 
                 <div className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(#2e4a36_1px,transparent_1px)] [background-size:24px_24px] opacity-[0.03] mix-blend-multiply"></div>
@@ -409,93 +447,91 @@ export default function GhafSite() {
             </div>
         </div>
 
-        <div id="journey-gallery-track" className="relative w-full bg-neutral-50 pt-32 pb-24 overflow-hidden border-t border-neutral-200/40">
-            <div className="max-w-6xl mx-auto px-6 mb-24 relative z-10">
-                <span className="text-xs font-black tracking-widest text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full uppercase inline-block mb-3">// Historical Compilations</span>
-                <h3 className="text-3xl md:text-5xl font-black tracking-tight text-slate-900 leading-tight">Our Journey In Memories</h3>
-                <p className="text-slate-500 text-sm md:text-base font-medium max-w-md mt-2">A fluid archive of critical milestones, development workshops, and collaborative regional creation frames.</p>
+        <div id="journey-gallery-track" className="relative w-full bg-neutral-50 pt-24 pb-28 border-t border-neutral-200/40 md:pt-32 md:pb-36">
+            <div className="relative z-10 mx-auto mb-12 max-w-6xl px-6 md:mb-16">
+                <span className="mb-3 inline-block rounded-full bg-emerald-50 px-3 py-1 text-xs font-black uppercase tracking-widest text-emerald-700">// Historical Compilations</span>
+                <h3 className="text-3xl font-black tracking-tight text-slate-900 leading-tight md:text-5xl">Our Journey In Memories</h3>
+                <p className="mt-2 max-w-md text-sm font-medium text-slate-500 md:text-base">A fluid archive of critical milestones, development workshops, and collaborative regional creation frames.</p>
             </div>
 
-            <div className="relative w-full min-h-[200vh] md:min-h-[260vh] px-4 max-w-7xl mx-auto pb-[20vh]">
-                
-                <div className="gallery-card absolute left-[5%] top-[5%] w-[42%] md:w-[28%] z-30" data-parallax-speed="0.15" data-drift-x="-20">
-                    <div className="bg-white p-2 md:p-3 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.05)] border border-neutral-200/60 transform -rotate-2 hover:rotate-0 hover:scale-[1.03] transition-all duration-500">
-                        <div className="overflow-hidden rounded-xl aspect-[4/3] bg-neutral-100">
-                            <img src="/assets/first_pitch_gov.jpg" className="w-full h-full object-cover" alt="First Attempt at Pitch@Gov 2024" loading="lazy" />
+            <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-4 sm:grid-cols-2 sm:gap-7 lg:grid-cols-3 lg:gap-8">
+                <div className="gallery-card">
+                    <div className="-rotate-1 rounded-2xl border border-neutral-200/70 bg-white p-3 shadow-[0_12px_36px_rgba(0,0,0,0.06)] transition-transform duration-500 hover:rotate-0 hover:scale-[1.02] md:p-4">
+                        <div className="aspect-[4/3] overflow-hidden rounded-xl bg-neutral-100">
+                            <img src="/assets/first_pitch_gov.jpg" className="h-full w-full object-cover" alt="First Attempt at Pitch@Gov 2024" loading="lazy" />
                         </div>
-                        <p className="text-[11px] font-bold text-neutral-400 mt-2 tracking-wide uppercase text-center">First Attempt at Pitch@Gov 2024</p>
+                        <p className="mt-3 text-center text-[11px] font-bold uppercase tracking-wide text-neutral-400">First Attempt at Pitch@Gov 2024</p>
                     </div>
                 </div>
 
-                <div className="gallery-card absolute right-[8%] top-[0%] w-[46%] md:w-[32%] z-10" data-parallax-speed="0.05" data-drift-x="30">
-                    <div className="bg-white p-2 md:p-4 rounded-2xl shadow-[0_15px_40px_rgba(0,0,0,0.06)] border border-neutral-200/60 transform rotate-3 hover:rotate-0 hover:scale-[1.03] transition-all duration-500">
-                        <div className="overflow-hidden rounded-xl aspect-[3/4] bg-neutral-100">
-                            <img src="/assets/rahel.jpg" className="w-full h-full object-cover" alt="Rahel describing our features" loading="lazy" />
+                <div className="gallery-card">
+                    <div className="rotate-1 rounded-2xl border border-neutral-200/70 bg-white p-3 shadow-[0_12px_36px_rgba(0,0,0,0.06)] transition-transform duration-500 hover:rotate-0 hover:scale-[1.02] md:p-4">
+                        <div className="aspect-[3/4] overflow-hidden rounded-xl bg-neutral-100 sm:aspect-[4/5]">
+                            <img src="/assets/rahel.jpg" className="h-full w-full object-cover object-top" alt="Rahel describing our features" loading="lazy" />
                         </div>
-                        <p className="text-[11px] font-bold text-neutral-400 mt-2.5 tracking-wide uppercase text-center">Rahel describing our features</p>
+                        <p className="mt-3 text-center text-[11px] font-bold uppercase tracking-wide text-neutral-400">Rahel describing our features</p>
                     </div>
                 </div>
 
-                <div className="gallery-card absolute left-[30%] top-[30%] w-[38%] md:w-[24%] z-40" data-parallax-speed="0.25" data-drift-x="10">
-                    <div className="bg-white p-2 rounded-2xl shadow-[0_20px_45px_rgba(0,0,0,0.08)] border border-neutral-200/80 transform rotate-1 hover:rotate-0 hover:scale-[1.03] transition-all duration-500">
-                        <div className="overflow-hidden rounded-xl aspect-square bg-neutral-100">
-                            <img src="/assets/meet-the-team.jpg" className="w-full h-full object-cover" alt="The Ghaf team winning Pitch@Gov" loading="lazy" />
+                <div className="gallery-card">
+                    <div className="-rotate-1 rounded-2xl border border-neutral-200/70 bg-white p-3 shadow-[0_12px_36px_rgba(0,0,0,0.06)] transition-transform duration-500 hover:rotate-0 hover:scale-[1.02] md:p-4">
+                        <div className="aspect-[4/3] overflow-hidden rounded-xl bg-neutral-100">
+                            <img src="/assets/meet-the-team.jpg" className="h-full w-full object-cover" alt="The Ghaf team winning Pitch@Gov" loading="lazy" />
                         </div>
-                        <p className="text-[10px] font-bold text-neutral-400 mt-2 tracking-wide uppercase text-center">The Ghaf team winning Pitch@Gov</p>
+                        <p className="mt-3 text-center text-[11px] font-bold uppercase tracking-wide text-neutral-400">The Ghaf team winning Pitch@Gov</p>
                     </div>
                 </div>
 
-                <div className="gallery-card absolute right-[2%] top-[45%] w-[40%] md:w-[26%] z-20" data-parallax-speed="0.10" data-drift-x="25">
-                    <div className="bg-white p-2 md:p-3 rounded-2xl shadow-[0_12px_35px_rgba(0,0,0,0.05)] border border-neutral-200/60 transform -rotate-3 hover:rotate-0 hover:scale-[1.03] transition-all duration-500">
-                        <div className="overflow-hidden rounded-xl aspect-[4/3] bg-neutral-100">
-                            <img src="/assets/nevan.jpeg" className="w-full h-full object-cover" alt="Nevan concluding our pitch" loading="lazy" />
+                <div className="gallery-card">
+                    <div className="rotate-1 rounded-2xl border border-neutral-200/70 bg-white p-3 shadow-[0_12px_36px_rgba(0,0,0,0.06)] transition-transform duration-500 hover:rotate-0 hover:scale-[1.02] md:p-4">
+                        <div className="aspect-[3/4] overflow-hidden rounded-xl bg-neutral-100 sm:aspect-[4/5]">
+                            <img src="/assets/nevan.jpeg" className="h-full w-full object-cover object-top" alt="Nevan concluding our pitch" loading="lazy" />
                         </div>
-                        <p className="text-[11px] font-bold text-neutral-400 mt-2 tracking-wide uppercase text-center">Nevan concluding our pitch</p>
+                        <p className="mt-3 text-center text-[11px] font-bold uppercase tracking-wide text-neutral-400">Nevan concluding our pitch</p>
                     </div>
                 </div>
 
-                <div className="gallery-card absolute left-[5%] top-[55%] w-[44%] md:w-[30%] z-0" data-parallax-speed="0.02" data-drift-x="-15">
-                    <div className="bg-white p-2 md:p-4 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.04)] border border-neutral-200/40 transform rotate-2 hover:rotate-0 hover:scale-[1.03] transition-all duration-500">
-                        <div className="overflow-hidden rounded-xl aspect-video bg-neutral-100">
-                            <img src="/assets/naqiyah.jpeg" className="w-full h-full object-cover" alt="Naqiyah explaining the business plan" loading="lazy" />
+                <div className="gallery-card">
+                    <div className="-rotate-1 rounded-2xl border border-neutral-200/70 bg-white p-3 shadow-[0_12px_36px_rgba(0,0,0,0.06)] transition-transform duration-500 hover:rotate-0 hover:scale-[1.02] md:p-4">
+                        <div className="aspect-[4/3] overflow-hidden rounded-xl bg-neutral-100">
+                            <img src="/assets/naqiyah.jpeg" className="h-full w-full object-cover object-top" alt="Naqiyah explaining the business plan" loading="lazy" />
                         </div>
-                        <p className="text-[11px] font-bold text-neutral-400 mt-2 tracking-wide uppercase text-center">Naqiyah explaining the business plan</p>
+                        <p className="mt-3 text-center text-[11px] font-bold uppercase tracking-wide text-neutral-400">Naqiyah explaining the business plan</p>
                     </div>
                 </div>
 
-                <div className="gallery-card absolute left-[26%] top-[75%] w-[48%] md:w-[34%] z-20" data-parallax-speed="0.12" data-drift-x="-25">
-                    <div className="bg-white p-2 md:p-4 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.07)] border border-neutral-200/60 transform -rotate-1 hover:rotate-0 hover:scale-[1.03] transition-all duration-500">
-                        <div className="overflow-hidden rounded-xl aspect-[16/10] bg-neutral-100">
-                            <img src="/assets/president.jpg" className="w-full h-full object-cover" alt="Meeting the Khalifa University President to discuss Ghaf" loading="lazy" />
+                <div className="gallery-card">
+                    <div className="rotate-1 rounded-2xl border border-neutral-200/70 bg-white p-3 shadow-[0_12px_36px_rgba(0,0,0,0.06)] transition-transform duration-500 hover:rotate-0 hover:scale-[1.02] md:p-4">
+                        <div className="aspect-[4/3] overflow-hidden rounded-xl bg-neutral-100">
+                            <img src="/assets/president.jpg" className="h-full w-full object-cover" alt="Meeting the Khalifa University President to discuss Ghaf" loading="lazy" />
                         </div>
-                        <p className="text-[11px] font-bold text-neutral-400 mt-2.5 tracking-wide uppercase text-center">Meeting the Khalifa University President to discuss Ghaf</p>
+                        <p className="mt-3 text-center text-[11px] font-bold uppercase tracking-wide text-neutral-400">Meeting the Khalifa University President to discuss Ghaf</p>
                     </div>
                 </div>
 
-                <div className="gallery-card absolute right-[10%] top-[72%] w-[42%] md:w-[25%] z-30" data-parallax-speed="0.22" data-drift-x="20">
-                    <div className="bg-white p-2 rounded-2xl shadow-[0_25px_50px_rgba(0,0,0,0.09)] border border-neutral-200/80 transform rotate-4 hover:rotate-0 hover:scale-[1.03] transition-all duration-500">
-                        <div className="overflow-hidden rounded-xl aspect-[3/4] bg-neutral-100">
-                            <img src="/assets/full_team.jpeg" className="w-full h-full object-cover" alt="The team on pitch day" loading="lazy" />
+                <div className="gallery-card sm:col-span-2 lg:col-span-1">
+                    <div className="-rotate-1 rounded-2xl border border-neutral-200/70 bg-white p-3 shadow-[0_12px_36px_rgba(0,0,0,0.06)] transition-transform duration-500 hover:rotate-0 hover:scale-[1.02] md:p-4">
+                        <div className="aspect-[4/3] overflow-hidden rounded-xl bg-neutral-100 lg:aspect-[3/4]">
+                            <img src="/assets/full_team.jpeg" className="h-full w-full object-cover" alt="The team on pitch day" loading="lazy" />
                         </div>
-                        <p className="text-[10px] font-bold text-neutral-400 mt-2 tracking-wide uppercase text-center">The team on pitch day</p>
+                        <p className="mt-3 text-center text-[11px] font-bold uppercase tracking-wide text-neutral-400">The team on pitch day</p>
                     </div>
                 </div>
 
-                <div className="gallery-card absolute left-[15%] md:left-[25%] top-[72%] md:top-[75%] w-[70%] md:w-[50%] z-40" data-parallax-speed="0.08" data-drift-x="0">
-                    <div className="bg-white p-3 md:p-5 rounded-3xl shadow-[0_30px_70px_rgba(0,0,0,0.12)] border border-neutral-200/90 transform hover:scale-[1.01] transition-transform duration-500">
-                        <div className="overflow-hidden rounded-2xl aspect-video bg-neutral-100">
-                            <img src="/assets/meet-the-team.jpg" className="w-full h-full object-cover" alt="Meet the Winning Team" loading="lazy" />
+                <div className="gallery-card sm:col-span-2 lg:col-span-2">
+                    <div className="rounded-3xl border border-neutral-200/80 bg-white p-4 shadow-[0_20px_50px_rgba(0,0,0,0.08)] transition-transform duration-500 hover:scale-[1.01] md:p-5">
+                        <div className="aspect-video overflow-hidden rounded-2xl bg-neutral-100">
+                            <img src="/assets/meet-the-team.jpg" className="h-full w-full object-cover" alt="Meet the Winning Team" loading="lazy" />
                         </div>
-                        <div className="mt-4 flex justify-between items-center px-1">
+                        <div className="mt-4 flex items-center justify-between gap-4 px-1">
                             <div>
-                                <h5 className="text-sm md:text-base font-bold text-neutral-800 tracking-tight">Meet the Winning Team</h5>
-                                <p className="text-[11px] text-emerald-600 font-bold tracking-wider uppercase mt-0.5">Pitch@Gov Award Grand Finale</p>
+                                <h5 className="text-sm font-bold tracking-tight text-neutral-800 md:text-base">Meet the Winning Team</h5>
+                                <p className="mt-0.5 text-[11px] font-bold uppercase tracking-wider text-emerald-600">Pitch@Gov Award Grand Finale</p>
                             </div>
-                            <span className="text-xs bg-emerald-50 text-emerald-700 font-black px-3 py-1 rounded-full uppercase tracking-widest hidden sm:inline-block">1st Place</span>
+                            <span className="hidden rounded-full bg-emerald-50 px-3 py-1 text-xs font-black uppercase tracking-widest text-emerald-700 sm:inline-block">1st Place</span>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </section>
