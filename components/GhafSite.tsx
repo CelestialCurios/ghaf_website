@@ -4,18 +4,12 @@ import { useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import {
-  ArrowRight,
-  BarChart3,
-  Bot,
   ChevronRight,
   ExternalLink,
-  Gift,
-  ScanLine,
   Target,
-  User,
-  Users,
 } from 'lucide-react'
 import WaitlistModal from '@/components/ui/WaitlistModal'
+import PhoneScreen from '@/components/ui/PhoneScreen'
 
 const LOGO_LIGHT_SRC = '/assets/logo_light_png.png'
 const LOGO_DARK_SRC = '/assets/logo_dark.png'
@@ -23,6 +17,33 @@ const LOGO_CROP_BOX =
   'relative h-9 w-[10.5rem] overflow-hidden md:h-10 md:w-[12rem]'
 const LOGO_CROP_IMG =
   'absolute left-1/2 top-1/2 h-[7rem] w-auto max-w-none -translate-x-1/2 -translate-y-1/2 md:h-[7.5rem]'
+
+const appSs = (file: string) =>
+  `/assets/app/ghaf%20app%20ss/${encodeURIComponent(file)}`
+
+const PHONE_SCREENS = {
+  personalize: [
+    appSs('arabic version homepage.png'),
+    appSs('homepage.png'),
+    appSs('profile.png'),
+    appSs('profile-2.png'),
+  ],
+  connect: [
+    appSs('leaderboard.png'),
+    appSs('notifcations.png'),
+    appSs('events-map.png'),
+  ],
+  track: [
+    appSs('carbon-tracker.png'),
+    appSs('carbon-tracker-2.png'),
+    appSs('carbon-tracker-3.png'),
+    appSs('carbon-tracker-4.png'),
+  ],
+  scan: [appSs('scanner.png')],
+  rewards: [appSs('Ghaf Rewards.png')],
+  renew: [appSs('chatbot renew-e.png'), appSs('renew.png')],
+  events: [appSs('event-list.png'), appSs('events-map.png')],
+} as const
 
 export default function GhafSite() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -572,12 +593,12 @@ export default function GhafSite() {
                 <div className="md:col-span-2 bg-slate-50 border border-slate-200/60 rounded-3xl p-8 shadow-sm flex flex-col justify-between stat-card transform opacity-0">
                     <div>
                         <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-rose-50 text-rose-600 border border-rose-200 rounded-full text-xs font-bold uppercase mb-6">Critical Level</div>
-                        <h4 className="text-6xl md:text-7xl font-black text-slate-900 tracking-tighter mb-4">21.6 Tons</h4>
+                        <h4 className="text-6xl md:text-7xl font-black text-slate-900 tracking-tighter mb-4">17.576 Tons</h4>
                         <p className="text-slate-600 font-medium text-base max-w-xl leading-relaxed">
-                            The current annual carbon footprint average per resident in the UAE. This ranks at <span className="font-bold text-rose-600">4.5x higher</span> than the global average threshold.
+                            The current annual carbon footprint average per resident in the UAE. This ranks at <span className="font-bold text-rose-600">4x higher</span> than the global average threshold.
                         </p>
                     </div>
-                    <div className="mt-8 pt-4 border-t border-slate-200/80 text-xs font-bold text-slate-400 uppercase tracking-widest">Source Baseline Data Attribution</div>
+                    <div className="mt-8 pt-4 border-t border-slate-200/80 text-xs font-bold text-slate-400 uppercase tracking-widest">According to iea.org</div>
                 </div>
 
                 <div className="bg-gradient-to-br from-[#1b2920] to-[#243a2c] text-white rounded-3xl p-8 shadow-md flex flex-col justify-between stat-card transform opacity-0">
@@ -611,11 +632,7 @@ export default function GhafSite() {
                 </div>
                 <div className="flex justify-center phone-block">
                     <div className="w-[280px] h-[540px] bg-slate-900 rounded-[2.5rem] border-[6px] border-slate-950 shadow-xl overflow-hidden transform hover:scale-[1.02] transition-transform duration-500">
-                        <div className="w-full h-full bg-gradient-to-b from-[#213227] to-[#121c16] p-6 flex flex-col justify-end text-white">
-                            <User className="w-10 h-10 text-lime-400 mb-4" />
-                            <h5 className="font-bold text-xl">Mascot Framework</h5>
-                            <p className="text-xs text-white/60 mt-1">Configured for emotional loss-aversion metrics.</p>
-                        </div>
+                        <PhoneScreen images={[...PHONE_SCREENS.personalize]} alt="Personalize app screens" />
                     </div>
                 </div>
             </div>
@@ -623,17 +640,13 @@ export default function GhafSite() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center feature-story-row">
                 <div className="flex justify-center phone-block md:order-1 order-2">
                     <div className="w-[280px] h-[540px] bg-slate-900 rounded-[2.5rem] border-[6px] border-slate-950 shadow-xl overflow-hidden transform hover:scale-[1.02] transition-transform duration-500">
-                        <div className="w-full h-full bg-gradient-to-b from-slate-950 to-[#1b2920] p-6 flex flex-col justify-end text-white">
-                            <Users className="w-10 h-10 text-emerald-400 mb-4" />
-                            <h5 className="font-bold text-xl">Youth Circles</h5>
-                            <p className="text-xs text-white/60 mt-1">Unified regional social bracket parameters.</p>
-                        </div>
+                        <PhoneScreen images={[...PHONE_SCREENS.connect]} alt="Connect and grow app screens" />
                     </div>
                 </div>
                 <div className="space-y-4 text-block md:order-2 order-1">
                     <span className="text-xs font-mono font-bold text-emerald-600 tracking-wider">02 // ECOSYSTEM</span>
                     <h3 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight">Connect & Grow</h3>
-                    <p className="text-slate-600 text-lg leading-relaxed font-medium">Coordinate lifestyle tracking targets together with private micro-brackets driven across over 393,891+ regional students.</p>
+                    <p className="text-slate-600 text-lg leading-relaxed font-medium">Coordinate lifestyle tracking targets together with private micro-brackets and gamify your sustainability experience.</p>
                 </div>
             </div>
 
@@ -641,17 +654,11 @@ export default function GhafSite() {
                 <div className="space-y-4 text-block">
                     <span className="text-xs font-mono font-bold text-emerald-600 tracking-wider">03 // ANALYTICS</span>
                     <h3 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight">Track</h3>
-                    <p className="text-slate-600 text-lg leading-relaxed font-medium">Gain clear visibility over historical environmental records without manual logs or confusing conversion tracking metrics.</p>
+                    <p className="text-slate-600 text-lg leading-relaxed font-medium">Track your carbon across the board easier than ever before, and gain clear visibility over your historical records without confusing conversion tracking metrics.</p>
                 </div>
                 <div className="flex justify-center phone-block">
                     <div className="w-[280px] h-[540px] bg-slate-900 rounded-[2.5rem] border-[6px] border-slate-950 shadow-xl overflow-hidden transform hover:scale-[1.02] transition-transform duration-500">
-                        <div className="w-full h-full bg-slate-950 p-6 flex flex-col justify-between text-white">
-                            <div className="h-1/2 flex items-center justify-center"><BarChart3 className="w-16 h-16 text-lime-400 animate-pulse" /></div>
-                            <div>
-                                <h5 className="font-bold text-xl">Zero Manual Interface</h5>
-                                <p className="text-xs text-white/60 mt-1">Autonomous consumption insights rendered instantly.</p>
-                            </div>
-                        </div>
+                        <PhoneScreen images={[...PHONE_SCREENS.track]} alt="Carbon tracker app screens" />
                     </div>
                 </div>
             </div>
@@ -659,17 +666,13 @@ export default function GhafSite() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center feature-story-row">
                 <div className="flex justify-center phone-block md:order-1 order-2">
                     <div className="w-[280px] h-[540px] bg-slate-900 rounded-[2.5rem] border-[6px] border-slate-950 shadow-xl overflow-hidden transform hover:scale-[1.02] transition-transform duration-500">
-                        <div className="w-full h-full bg-gradient-to-br from-[#1b2920] to-neutral-900 p-6 flex flex-col justify-end text-white">
-                            <ScanLine className="w-10 h-10 text-emerald-400 mb-4" />
-                            <h5 className="font-bold text-xl">OCR Bill Scraper</h5>
-                            <p className="text-xs text-white/60 mt-1">Converts incoming DEWA and ADDC bills instantly.</p>
-                        </div>
+                        <PhoneScreen images={[...PHONE_SCREENS.scan]} alt="Scanner app screen" />
                     </div>
                 </div>
                 <div className="space-y-4 text-block md:order-2 order-1">
                     <span className="text-xs font-mono font-bold text-emerald-600 tracking-wider">04 // AUTOMATION</span>
                     <h3 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight">Scan & Swap</h3>
-                    <p className="text-slate-600 text-lg leading-relaxed font-medium">Simply drop incoming utility PDFs into the document ingestion layer to parse carbon footprint variables automatically.</p>
+                    <p className="text-slate-600 text-lg leading-relaxed font-medium">Scan products on the go to get Sustainable alternatives in our flagship AI-powered feature</p>
                 </div>
             </div>
 
@@ -692,13 +695,7 @@ export default function GhafSite() {
 
                 <div className="z-10 centered-phone-box transform scale-90 opacity-0">
                     <div className="w-[290px] h-[550px] bg-slate-900 rounded-[2.75rem] border-[6px] border-slate-950 shadow-2xl overflow-hidden relative">
-                        <div className="w-full h-full bg-gradient-to-t from-slate-950 via-[#213227] to-slate-900 p-6 flex flex-col justify-between text-white text-center">
-                            <div className="pt-8 flex justify-center"><Gift className="w-12 h-12 text-lime-400 animate-bounce" /></div>
-                            <div>
-                                <h4 className="font-black text-2xl tracking-tight">Real Rewards</h4>
-                                <p className="text-xs text-emerald-100/60 mt-2 px-2 leading-relaxed">Convert verified action execution trends instantly into commercial consumer perks across top regional channels.</p>
-                            </div>
-                        </div>
+                        <PhoneScreen images={[...PHONE_SCREENS.rewards]} alt="Ghaf Rewards app screen" />
                     </div>
                 </div>
             </div>
@@ -711,40 +708,15 @@ export default function GhafSite() {
                 </div>
                 <div className="flex justify-center phone-block">
                     <div className="w-[280px] h-[540px] bg-slate-900 rounded-[2.5rem] border-[6px] border-slate-950 shadow-xl overflow-hidden transform hover:scale-[1.02] transition-transform duration-500">
-                        <div className="w-full h-full bg-slate-950 p-6 flex flex-col justify-end text-white">
-                            <Bot className="w-10 h-10 text-lime-400 mb-4" />
-                            <h5 className="font-bold text-xl">Renew-E Agent</h5>
-                            <p className="text-xs text-white/60 mt-1">Nudging behavioral utility execution maps.</p>
-                        </div>
+                        <PhoneScreen images={[...PHONE_SCREENS.renew]} alt="Renew-e app screens" />
                     </div>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center py-12 border-t border-slate-100 feature-story-row">
                 <div className="lg:col-span-5 flex justify-center phone-block">
-                    <div className="w-[300px] h-[580px] bg-slate-900 rounded-[2.75rem] border-[8px] border-slate-950 shadow-2xl overflow-hidden relative bg-white p-4">
-                        <div className="w-full h-full bg-slate-50/50 rounded-[1.75rem] border border-slate-100 p-4 flex flex-col justify-between">
-                            <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
-                                <h4 className="text-emerald-900 font-extrabold text-lg mb-3">Upcoming Events</h4>
-                                <div className="flex gap-3 items-center bg-emerald-50/60 border border-emerald-100/50 p-2.5 rounded-xl">
-                                    <div className="w-14 h-14 bg-slate-200 rounded-lg overflow-hidden shrink-0">
-                                        <div className="w-full h-full bg-cover bg-center" style={{ backgroundImage: "url('/assets/meet-the-team.jpg')" }}></div>
-                                    </div>
-                                    <div className="min-w-0 flex-1">
-                                        <h5 className="text-slate-900 font-bold text-sm truncate">Eco Market</h5>
-                                        <p className="text-xs text-emerald-700 font-medium mt-0.5">Abu Dhabi, UAE</p>
-                                    </div>
-                                    <div className="bg-white px-2 py-1 rounded-md text-center shadow-xs border border-emerald-100">
-                                        <span className="block text-[10px] font-bold uppercase text-emerald-600">Apr</span>
-                                        <span className="block text-sm font-black text-slate-800 leading-none">20</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="flex justify-between items-center px-2">
-                                <div className="flex gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-700"></span><span className="w-2 h-2 rounded-full bg-slate-200"></span><span className="w-2 h-2 rounded-full bg-slate-200"></span></div>
-                                <span className="text-xs font-bold text-emerald-800 flex items-center gap-1">Find all events <ArrowRight className="w-3 h-3" /></span>
-                            </div>
-                        </div>
+                    <div className="w-[300px] h-[580px] bg-slate-900 rounded-[2.75rem] border-[8px] border-slate-950 shadow-2xl overflow-hidden relative">
+                        <PhoneScreen images={[...PHONE_SCREENS.events]} alt="Community events app screens" />
                     </div>
                 </div>
 
