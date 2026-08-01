@@ -631,17 +631,21 @@ export default function GhafSite() {
                     <p className="text-slate-600 text-lg leading-relaxed font-medium">Adopt an endangered companion framework tailored directly to mirror your climate decisions dynamically.</p>
                 </div>
                 <div className="flex justify-center phone-block">
-                    <div className="w-[280px] h-[540px] bg-slate-900 rounded-[2.5rem] border-[6px] border-slate-950 shadow-xl overflow-hidden transform hover:scale-[1.02] transition-transform duration-500">
-                        <PhoneScreen images={[...PHONE_SCREENS.personalize]} alt="Personalize app screens" />
-                    </div>
+                    <PhoneScreen
+                        images={[...PHONE_SCREENS.personalize]}
+                        alt="Personalize app screens"
+                        frameClassName="w-[280px] h-[540px] bg-slate-900 rounded-[2.5rem] border-[6px] border-slate-950 shadow-xl overflow-hidden transform hover:scale-[1.02] transition-transform duration-500"
+                    />
                 </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center feature-story-row">
                 <div className="flex justify-center phone-block md:order-1 order-2">
-                    <div className="w-[280px] h-[540px] bg-slate-900 rounded-[2.5rem] border-[6px] border-slate-950 shadow-xl overflow-hidden transform hover:scale-[1.02] transition-transform duration-500">
-                        <PhoneScreen images={[...PHONE_SCREENS.connect]} alt="Connect and grow app screens" />
-                    </div>
+                    <PhoneScreen
+                        images={[...PHONE_SCREENS.connect]}
+                        alt="Connect and grow app screens"
+                        frameClassName="w-[280px] h-[540px] bg-slate-900 rounded-[2.5rem] border-[6px] border-slate-950 shadow-xl overflow-hidden transform hover:scale-[1.02] transition-transform duration-500"
+                    />
                 </div>
                 <div className="space-y-4 text-block md:order-2 order-1">
                     <span className="text-xs font-mono font-bold text-emerald-600 tracking-wider">02 // ECOSYSTEM</span>
@@ -657,17 +661,21 @@ export default function GhafSite() {
                     <p className="text-slate-600 text-lg leading-relaxed font-medium">Track your carbon across the board easier than ever before, and gain clear visibility over your historical records without confusing conversion tracking metrics.</p>
                 </div>
                 <div className="flex justify-center phone-block">
-                    <div className="w-[280px] h-[540px] bg-slate-900 rounded-[2.5rem] border-[6px] border-slate-950 shadow-xl overflow-hidden transform hover:scale-[1.02] transition-transform duration-500">
-                        <PhoneScreen images={[...PHONE_SCREENS.track]} alt="Carbon tracker app screens" />
-                    </div>
+                    <PhoneScreen
+                        images={[...PHONE_SCREENS.track]}
+                        alt="Carbon tracker app screens"
+                        frameClassName="w-[280px] h-[540px] bg-slate-900 rounded-[2.5rem] border-[6px] border-slate-950 shadow-xl overflow-hidden transform hover:scale-[1.02] transition-transform duration-500"
+                    />
                 </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center feature-story-row">
                 <div className="flex justify-center phone-block md:order-1 order-2">
-                    <div className="w-[280px] h-[540px] bg-slate-900 rounded-[2.5rem] border-[6px] border-slate-950 shadow-xl overflow-hidden transform hover:scale-[1.02] transition-transform duration-500">
-                        <PhoneScreen images={[...PHONE_SCREENS.scan]} alt="Scanner app screen" />
-                    </div>
+                    <PhoneScreen
+                        images={[...PHONE_SCREENS.scan]}
+                        alt="Scanner app screen"
+                        frameClassName="w-[280px] h-[540px] bg-slate-900 rounded-[2.5rem] border-[6px] border-slate-950 shadow-xl overflow-hidden transform hover:scale-[1.02] transition-transform duration-500"
+                    />
                 </div>
                 <div className="space-y-4 text-block md:order-2 order-1">
                     <span className="text-xs font-mono font-bold text-emerald-600 tracking-wider">04 // AUTOMATION</span>
@@ -694,9 +702,11 @@ export default function GhafSite() {
                 </div>
 
                 <div className="z-10 centered-phone-box transform scale-90 opacity-0">
-                    <div className="w-[290px] h-[550px] bg-slate-900 rounded-[2.75rem] border-[6px] border-slate-950 shadow-2xl overflow-hidden relative">
-                        <PhoneScreen images={[...PHONE_SCREENS.rewards]} alt="Ghaf Rewards app screen" />
-                    </div>
+                    <PhoneScreen
+                        images={[...PHONE_SCREENS.rewards]}
+                        alt="Ghaf Rewards app screen"
+                        frameClassName="w-[290px] h-[550px] bg-slate-900 rounded-[2.75rem] border-[6px] border-slate-950 shadow-2xl overflow-hidden relative"
+                    />
                 </div>
             </div>
 
@@ -707,17 +717,21 @@ export default function GhafSite() {
                     <p className="text-slate-600 text-lg leading-relaxed font-medium">An adaptive AI micro-coach providing context-aware action steps to build sustainable, lifelong ecological habits.</p>
                 </div>
                 <div className="flex justify-center phone-block">
-                    <div className="w-[280px] h-[540px] bg-slate-900 rounded-[2.5rem] border-[6px] border-slate-950 shadow-xl overflow-hidden transform hover:scale-[1.02] transition-transform duration-500">
-                        <PhoneScreen images={[...PHONE_SCREENS.renew]} alt="Renew-e app screens" />
-                    </div>
+                    <PhoneScreen
+                        images={[...PHONE_SCREENS.renew]}
+                        alt="Renew-e app screens"
+                        frameClassName="w-[280px] h-[540px] bg-slate-900 rounded-[2.5rem] border-[6px] border-slate-950 shadow-xl overflow-hidden transform hover:scale-[1.02] transition-transform duration-500"
+                    />
                 </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center py-12 border-t border-slate-100 feature-story-row">
                 <div className="lg:col-span-5 flex justify-center phone-block">
-                    <div className="w-[300px] h-[580px] bg-slate-900 rounded-[2.75rem] border-[8px] border-slate-950 shadow-2xl overflow-hidden relative">
-                        <PhoneScreen images={[...PHONE_SCREENS.events]} alt="Community events app screens" />
-                    </div>
+                    <PhoneScreen
+                        images={[...PHONE_SCREENS.events]}
+                        alt="Community events app screens"
+                        frameClassName="w-[300px] h-[580px] bg-slate-900 rounded-[2.75rem] border-[8px] border-slate-950 shadow-2xl overflow-hidden relative"
+                    />
                 </div>
 
                 <div className="lg:col-span-7 space-y-6 text-block">
