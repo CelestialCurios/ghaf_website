@@ -647,7 +647,7 @@ export default function GhafSite() {
                 <div className="space-y-4 text-block md:order-2 order-1">
                     <span className="text-xs font-mono font-bold text-emerald-600 tracking-wider">02 // ECOSYSTEM</span>
                     <h3 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight">Connect & Grow</h3>
-                    <p className="text-slate-600 text-lg leading-relaxed font-medium">Coordinate with like-minded users, compare lifestyles targets and gamify your sustainability experience.</p>
+                    <p className="text-slate-600 text-lg leading-relaxed font-medium">Connect with like-minded users, compare lifestyles targets and gamify your sustainability experience.</p>
                 </div>
             </div>
 
@@ -735,7 +735,7 @@ export default function GhafSite() {
                     <span className="text-xs font-black tracking-widest text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full uppercase inline-block">// Active Regional Initiatives</span>
                     <h3 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900">Community Events</h3>
                     <p className="text-slate-600 text-lg font-medium leading-relaxed">
-                        Step outside the screen framework. Connect seamlessly with neighborhood-driven climate assemblies, regional swap shops, and pop-up ecological hubs across the emirates.
+                        Step out into the world. Coordinate seamlessly with friends, attend community-driven climate assemblies and pop-up ecological hubs across all the emirates.
                     </p>
                     
                     <div className="space-y-3 pt-4" id="event-animated-list">
