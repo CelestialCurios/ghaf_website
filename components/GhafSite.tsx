@@ -483,7 +483,7 @@ export default function GhafSite() {
                     </button>
 
                     <div id="team-video-typography" className="pointer-events-none absolute bottom-6 left-6 z-40 translate-y-4 transform opacity-0 md:bottom-10 md:left-10">
-                        <span className="mb-1 block font-mono text-xs font-bold uppercase tracking-widest text-lime-400">// Meet the team</span>
+                        <span className="mb-1 block font-mono text-xs font-bold uppercase tracking-widest text-lime-400">Meet the team</span>
                         <h4 className="text-xl font-extrabold leading-none tracking-tight text-white md:text-2xl">Live Documented Milestones</h4>
                     </div>
                 </div>
@@ -493,7 +493,7 @@ export default function GhafSite() {
 
         <div id="journey-gallery-track" className="relative w-full bg-neutral-50 pt-24 pb-28 border-t border-neutral-200/40 md:pt-32 md:pb-36">
             <div className="relative z-10 mx-auto mb-12 max-w-6xl px-6 md:mb-16">
-                <span className="mb-3 inline-block rounded-full bg-emerald-50 px-3 py-1 text-xs font-black uppercase tracking-widest text-emerald-700">// Our Journey So Far</span>
+                <span className="mb-3 inline-block rounded-full bg-emerald-50 px-3 py-1 text-xs font-black uppercase tracking-widest text-emerald-700">Our Journey So Far</span>
                 <h3 className="text-3xl font-black tracking-tight text-slate-900 leading-tight md:text-5xl">Our Journey In Memories</h3>
                 <p className="mt-2 max-w-md text-sm font-medium text-slate-500 md:text-base">A fluid archive of critical milestones, development workshops, and collaborative regional creation frames.</p>
             </div>
@@ -584,7 +584,7 @@ export default function GhafSite() {
         
         <section id="impact" className="relative w-full py-32 max-w-6xl mx-auto px-6">
             <div className="max-w-3xl mb-20 bento-header">
-                <span className="text-xs font-black tracking-widest text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full uppercase inline-block mb-4">// Problem research</span>
+                <span className="text-xs font-black tracking-widest text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full uppercase inline-block mb-4">Problem research</span>
                 <h3 className="text-4xl md:text-6xl font-black tracking-tight text-slate-900 leading-none">The stats are stacked.</h3>
             </div>
 
@@ -603,7 +603,7 @@ export default function GhafSite() {
 
                 <div className="bg-gradient-to-br from-[#1b2920] to-[#243a2c] text-white rounded-3xl p-8 shadow-md flex flex-col justify-between stat-card transform opacity-0">
                     <div>
-                        <span className="text-xs font-bold uppercase tracking-widest text-lime-400 block mb-6">// Our Target</span>
+                        <span className="text-xs font-bold uppercase tracking-widest text-lime-400 block mb-6">Our Target</span>
                         <h4 className="text-5xl font-black text-white tracking-tight mb-2">57%</h4>
                         <p className="text-emerald-100/80 text-sm font-medium leading-relaxed">Of the country&apos;s entire ecological footprint stems entirely from domestic household choices and utility usage parameters.</p>
                     </div>
@@ -624,7 +624,7 @@ export default function GhafSite() {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center feature-story-row">
                 <div className="space-y-4 text-block">
-                    <span className="text-xs font-mono font-bold text-emerald-600 tracking-wider">01 // IDENTITY</span>
+                    <span className="text-xs font-mono font-bold text-emerald-600 tracking-wider">01 IDENTITY</span>
                     <h3 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight">Personalize</h3>
                     <p className="text-slate-600 text-lg leading-relaxed font-medium">Adopt an endangered companion as your avatar through your carbon conscious journey</p>
                 </div>
@@ -640,21 +640,21 @@ export default function GhafSite() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center feature-story-row">
                 <div className="flex justify-center phone-block md:order-1 order-2">
                     <PhoneScreen
-                        images={[...PHONE_SCREENS.connect]}
-                        alt="Connect and grow app screens"
+                        images={[...PHONE_SCREENS.scan]}
+                        alt="Scanner app screen"
                         frameClassName="w-[280px] h-[540px] bg-slate-900 rounded-[2.5rem] border-[6px] border-slate-950 shadow-xl overflow-hidden transform hover:scale-[1.02] transition-transform duration-500"
                     />
                 </div>
                 <div className="space-y-4 text-block md:order-2 order-1">
-                    <span className="text-xs font-mono font-bold text-emerald-600 tracking-wider">02 // ECOSYSTEM</span>
-                    <h3 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight">Connect & Grow</h3>
-                    <p className="text-slate-600 text-lg leading-relaxed font-medium">Connect with like-minded users, compare lifestyles targets and gamify your sustainability experience.</p>
+                    <span className="text-xs font-mono font-bold text-emerald-600 tracking-wider">02 AUTOMATION</span>
+                    <h3 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight">Scan & Swap</h3>
+                    <p className="text-slate-600 text-lg leading-relaxed font-medium">Scan products on the go to get Sustainable alternatives in our flagship AI-powered feature</p>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center feature-story-row">
                 <div className="space-y-4 text-block">
-                    <span className="text-xs font-mono font-bold text-emerald-600 tracking-wider">03 // ANALYTICS</span>
+                    <span className="text-xs font-mono font-bold text-emerald-600 tracking-wider">03 ANALYTICS</span>
                     <h3 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight">Track</h3>
                     <p className="text-slate-600 text-lg leading-relaxed font-medium">Track your carbon across the board easier than ever before, and gain clear visibility over your historical records without confusing conversion tracking metrics.</p>
                 </div>
@@ -670,15 +670,15 @@ export default function GhafSite() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center feature-story-row">
                 <div className="flex justify-center phone-block md:order-1 order-2">
                     <PhoneScreen
-                        images={[...PHONE_SCREENS.scan]}
-                        alt="Scanner app screen"
+                        images={[...PHONE_SCREENS.connect]}
+                        alt="Connect and grow app screens"
                         frameClassName="w-[280px] h-[540px] bg-slate-900 rounded-[2.5rem] border-[6px] border-slate-950 shadow-xl overflow-hidden transform hover:scale-[1.02] transition-transform duration-500"
                     />
                 </div>
                 <div className="space-y-4 text-block md:order-2 order-1">
-                    <span className="text-xs font-mono font-bold text-emerald-600 tracking-wider">04 // AUTOMATION</span>
-                    <h3 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight">Scan & Swap</h3>
-                    <p className="text-slate-600 text-lg leading-relaxed font-medium">Scan products on the go to get Sustainable alternatives in our flagship AI-powered feature</p>
+                    <span className="text-xs font-mono font-bold text-emerald-600 tracking-wider">04 ECOSYSTEM</span>
+                    <h3 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight">Connect & Grow</h3>
+                    <p className="text-slate-600 text-lg leading-relaxed font-medium">Connect with like-minded users, compare lifestyles targets and gamify your sustainability experience.</p>
                 </div>
             </div>
 
@@ -710,7 +710,7 @@ export default function GhafSite() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center feature-story-row">
                 <div className="space-y-4 text-block">
-                    <span className="text-xs font-mono font-bold text-emerald-600 tracking-wider">05 // COGNITIVE AGENT</span>
+                    <span className="text-xs font-mono font-bold text-emerald-600 tracking-wider">05 COGNITIVE AGENT</span>
                     <h3 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight">Renew-e</h3>
                     <p className="text-slate-600 text-lg leading-relaxed font-medium">An adaptive AI micro-coach providing context-aware action steps to build sustainable, lifelong ecological habits.</p>
                 </div>
@@ -733,7 +733,7 @@ export default function GhafSite() {
                 </div>
 
                 <div className="order-1 lg:order-2 lg:col-span-7 space-y-6 text-block">
-                    <span className="text-xs font-black tracking-widest text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full uppercase inline-block">06 // CONNECTION</span>
+                    <span className="text-xs font-black tracking-widest text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full uppercase inline-block">06 CONNECTION</span>
                     <h3 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900">Community Events</h3>
                     <p className="text-slate-600 text-lg font-medium leading-relaxed">
                         Step out into the world. Coordinate seamlessly with friends, attend community-driven climate assemblies and pop-up ecological hubs across all the emirates.
