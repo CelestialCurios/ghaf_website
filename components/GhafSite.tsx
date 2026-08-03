@@ -482,7 +482,7 @@ export default function GhafSite() {
                     </button>
 
                     <div id="team-video-typography" className="pointer-events-none absolute bottom-6 left-6 z-40 translate-y-4 transform opacity-0 md:bottom-10 md:left-10">
-                        <span className="mb-1 block font-mono text-xs font-bold uppercase tracking-widest text-lime-400">// CORES IN ACTION</span>
+                        <span className="mb-1 block font-mono text-xs font-bold uppercase tracking-widest text-lime-400">// Meet the team</span>
                         <h4 className="text-xl font-extrabold leading-none tracking-tight text-white md:text-2xl">Live Documented Milestones</h4>
                     </div>
                 </div>
@@ -492,7 +492,7 @@ export default function GhafSite() {
 
         <div id="journey-gallery-track" className="relative w-full bg-neutral-50 pt-24 pb-28 border-t border-neutral-200/40 md:pt-32 md:pb-36">
             <div className="relative z-10 mx-auto mb-12 max-w-6xl px-6 md:mb-16">
-                <span className="mb-3 inline-block rounded-full bg-emerald-50 px-3 py-1 text-xs font-black uppercase tracking-widest text-emerald-700">// Historical Compilations</span>
+                <span className="mb-3 inline-block rounded-full bg-emerald-50 px-3 py-1 text-xs font-black uppercase tracking-widest text-emerald-700">// Our Journey So Far</span>
                 <h3 className="text-3xl font-black tracking-tight text-slate-900 leading-tight md:text-5xl">Our Journey In Memories</h3>
                 <p className="mt-2 max-w-md text-sm font-medium text-slate-500 md:text-base">A fluid archive of critical milestones, development workshops, and collaborative regional creation frames.</p>
             </div>
@@ -583,7 +583,7 @@ export default function GhafSite() {
         
         <section id="impact" className="relative w-full py-32 max-w-6xl mx-auto px-6">
             <div className="max-w-3xl mb-20 bento-header">
-                <span className="text-xs font-black tracking-widest text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full uppercase inline-block mb-4">// Regional Data Metrics</span>
+                <span className="text-xs font-black tracking-widest text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full uppercase inline-block mb-4">// Problem research</span>
                 <h3 className="text-4xl md:text-6xl font-black tracking-tight text-slate-900 leading-none">The stats are stacked.</h3>
             </div>
 
@@ -602,7 +602,7 @@ export default function GhafSite() {
 
                 <div className="bg-gradient-to-br from-[#1b2920] to-[#243a2c] text-white rounded-3xl p-8 shadow-md flex flex-col justify-between stat-card transform opacity-0">
                     <div>
-                        <span className="text-xs font-bold uppercase tracking-widest text-lime-400 block mb-6">// Target Source</span>
+                        <span className="text-xs font-bold uppercase tracking-widest text-lime-400 block mb-6">// Our Target</span>
                         <h4 className="text-5xl font-black text-white tracking-tight mb-2">57%</h4>
                         <p className="text-emerald-100/80 text-sm font-medium leading-relaxed">Of the country&apos;s entire ecological footprint stems entirely from domestic household choices and utility usage parameters.</p>
                     </div>
@@ -723,7 +723,7 @@ export default function GhafSite() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center py-12 border-t border-slate-100 feature-story-row">
-                <div className="lg:col-span-5 flex justify-center phone-block">
+                <div className="order-2 lg:order-1 lg:col-span-5 flex justify-center phone-block">
                     <PhoneScreen
                         images={[...PHONE_SCREENS.events]}
                         alt="Community events app screens"
@@ -731,8 +731,8 @@ export default function GhafSite() {
                     />
                 </div>
 
-                <div className="lg:col-span-7 space-y-6 text-block">
-                    <span className="text-xs font-black tracking-widest text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full uppercase inline-block">// Active Regional Initiatives</span>
+                <div className="order-1 lg:order-2 lg:col-span-7 space-y-6 text-block">
+                    <span className="text-xs font-black tracking-widest text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full uppercase inline-block">06 // CONNECTION</span>
                     <h3 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900">Community Events</h3>
                     <p className="text-slate-600 text-lg font-medium leading-relaxed">
                         Step out into the world. Coordinate seamlessly with friends, attend community-driven climate assemblies and pop-up ecological hubs across all the emirates.
