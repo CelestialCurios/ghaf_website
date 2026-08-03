@@ -126,7 +126,8 @@ export default function GhafSite() {
               .to("#splash-logo-container", { scale: 0.25, y: -window.innerHeight * 0.42, x: -window.innerWidth * 0.35, opacity: 0, duration: 3 })
               .to("#nav-logo", { opacity: 1, y: 0, duration: 1 }, "-=1")
               .to("#hero-text-content", { opacity: 1, y: 0, duration: 3 }, "-=2")
-              .to({}, { duration: 2.5 })
+              // Hold headline centered before phone rises
+              .to({}, { duration: 4 })
               .to("#hero-phone-wrap", { opacity: 1, y: 0, scale: 1, duration: 4 });
 
         // -------------------------------------------------------------
@@ -401,7 +402,7 @@ export default function GhafSite() {
         </div>
     </nav>
 
-    <div id="hero-trigger" className="relative w-full min-h-[220vh] bg-[#213227]">
+    <div id="hero-trigger" className="relative w-full min-h-[260vh] bg-[#213227]">
         <div className="sticky top-0 flex h-screen w-full flex-col items-center justify-center overflow-hidden px-4">
             <canvas id="waveCanvas" ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none z-10 opacity-35" />
             
@@ -414,7 +415,7 @@ export default function GhafSite() {
                 </div>
             </div>
 
-            <div id="hero-text-content" className="absolute z-20 flex max-w-3xl translate-y-12 flex-col items-center text-center opacity-0 mt-[-22vh]">
+            <div id="hero-text-content" className="absolute z-20 flex max-w-3xl translate-y-12 flex-col items-center text-center opacity-0">
                 <span className="mb-6 flex items-center gap-1.5 rounded-full border border-lime-400/20 bg-lime-400/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-lime-400 shadow-sm">
                     <span className="h-1.5 w-1.5 animate-ping rounded-full bg-lime-400"></span> UAE Net Zero 2050
                 </span>
